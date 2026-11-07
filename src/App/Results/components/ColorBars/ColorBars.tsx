@@ -1,9 +1,9 @@
 import type { ComponentProps } from 'react'
-import styles from './ColorBars.module.css'
+import { usePresenter } from './usePresenter'
 
 /** Настроечная таблица: заглушка для отсутствующего постера и потерянного сигнала. */
 export function ColorBars({ className, ...props }: ComponentProps<'div'>) {
-  const classNames = className ? `${styles.colorBars} ${className}` : styles.colorBars
+  const {classNames} = usePresenter({ className })
 
   return <div className={classNames} {...props} />
 }
