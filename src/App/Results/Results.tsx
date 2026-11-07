@@ -1,8 +1,8 @@
 import { observer } from 'mobx-react-lite'
 import { PAGE_SIZE, showsStore } from '../../stores/ShowsStore'
-import { ColorBars } from '../ColorBars/ColorBars'
-import { GenreChips } from '../GenreChips/GenreChips'
-import { ShowCard } from '../ShowCard/ShowCard'
+import { ColorBars } from './components/ColorBars/ColorBars'
+import { GenreChips } from './GenreChips/GenreChips'
+import { ShowCard } from './ShowCard/ShowCard'
 import styles from './Results.module.css'
 
 export const Results = observer(function Results() {

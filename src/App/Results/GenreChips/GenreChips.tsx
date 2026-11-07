@@ -1,5 +1,5 @@
 import { observer } from 'mobx-react-lite'
-import { showsStore } from '../../stores/ShowsStore'
+import { showsStore } from '../../../stores/ShowsStore'
 import styles from './GenreChips.module.css'
 
 export const GenreChips = observer(function GenreChips() {

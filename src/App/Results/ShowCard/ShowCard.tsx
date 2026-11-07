@@ -1,5 +1,5 @@
-import type { Show } from '../../api/tvmaze'
-import { ColorBars } from '../ColorBars/ColorBars'
+import type { Show } from '../../../api/tvmaze'
+import { ColorBars } from '../components/ColorBars/ColorBars'
 import styles from './ShowCard.module.css'
 
 interface ShowCardProps {

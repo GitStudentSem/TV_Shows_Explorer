@@ -1,6 +1,6 @@
-import { Pagination } from '../components/Pagination/Pagination'
-import { Results } from '../components/Results/Results'
-import { SearchBar } from '../components/SearchBar/SearchBar'
+import { Pagination } from './Pagination/Pagination'
+import { Results } from './Results/Results'
+import { SearchBar } from './SearchBar/SearchBar'
 import styles from './App.module.css'
 
 function App() {
