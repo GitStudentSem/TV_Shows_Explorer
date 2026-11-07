@@ -1,37 +1,47 @@
-import { observer } from 'mobx-react-lite'
-import { PAGE_SIZE, showsStore } from '../../stores/ShowsStore'
-import { ColorBars } from './components/ColorBars/ColorBars'
-import { GenreChips } from './GenreChips/GenreChips'
-import { ShowCard } from './ShowCard/ShowCard'
-import styles from './Results.module.css'
+import { observer } from "mobx-react-lite";
+import { PAGE_SIZE, showsStore } from "../../stores/ShowsStore";
+import { ColorBars } from "./components/ColorBars/ColorBars";
+import { GenreChips } from "./GenreChips/GenreChips";
+import styles from "./Results.module.css";
+import { ShowCard } from "./ShowCard/ShowCard";
 
 export const Results = observer(function Results() {
-  const { status, shows, filteredShows, visibleShows, errorMessage, query } = showsStore
+  const { status, shows, filteredShows, visibleShows, errorMessage, query } =
+    showsStore;
 
-  if (status === 'idle') return null
+  if (status === "idle") return null;
 
-  if (status === 'loading') {
+  if (status === "loading") {
     return (
-      <div className={styles.skeletons} role="status" aria-label="Загрузка результатов">
+      <div
+        className={styles.skeletons}
+        role="status"
+        aria-label="Загрузка результатов"
+      >
         {Array.from({ length: PAGE_SIZE }, (_, index) => (
+          // biome-ignore lint/suspicious/noArrayIndexKey: <this is just a skeleton>
           <div key={index} className={styles.skeleton} />
         ))}
       </div>
-    )
+    );
   }
 
-  if (status === 'error') {
+  if (status === "error") {
     return (
       <ColorBars className={styles.message} role="alert">
         <div className={styles.messagePanel}>
           <h2 className={styles.messageTitle}>Нет сигнала</h2>
           <p>{errorMessage}</p>
-          <button type="button" className={styles.button} onClick={showsStore.submit}>
+          <button
+            type="button"
+            className={styles.button}
+            onClick={showsStore.submit}
+          >
             Повторить
           </button>
         </div>
       </ColorBars>
-    )
+    );
   }
 
   if (shows.length === 0) {
@@ -39,10 +49,13 @@ export const Results = observer(function Results() {
       <div className={styles.message} role="status">
         <div className={styles.messagePanel}>
           <h2 className={styles.messageTitle}>Ничего не найдено</h2>
-          <p>По запросу «{query.trim()}» на этом канале пусто. Попробуйте другое название.</p>
+          <p>
+            По запросу «{query.trim()}» на этом канале пусто. Попробуйте другое
+            название.
+          </p>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -57,5 +70,5 @@ export const Results = observer(function Results() {
         ))}
       </ul>
     </>
-  )
-})
+  );
+});

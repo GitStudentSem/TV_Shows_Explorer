@@ -15,14 +15,16 @@
   font-weight: 500;
   color: var(--cream);
   background: transparent;
-  transition: background-color 120ms, color 120ms;
+  transition:
+    background-color 120ms,
+    color 120ms;
 }
 
 .chip:hover {
   background: var(--panel-line);
 }
 
-.chip[aria-pressed='true'] {
+.chip[aria-pressed="true"] {
   border-color: var(--yellow);
   color: var(--ink);
   background: var(--yellow);

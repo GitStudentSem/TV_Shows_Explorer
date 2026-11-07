@@ -1,7 +1,7 @@
-import { Pagination } from './Pagination/Pagination'
-import { Results } from './Results/Results'
-import { SearchBar } from './SearchBar/SearchBar'
-import styles from './App.module.css'
+import styles from "./App.module.css";
+import { Pagination } from "./Pagination/Pagination";
+import { Results } from "./Results/Results";
+import { SearchBar } from "./SearchBar/SearchBar";
 
 function App() {
   return (
@@ -18,7 +18,7 @@ function App() {
 
       <Pagination />
     </main>
-  )
+  );
 }
 
-export default App
+export default App;

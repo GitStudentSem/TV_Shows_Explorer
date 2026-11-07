@@ -20,7 +20,8 @@
       "preset": "recommended",
       "a11y": {
         "noStaticElementInteractions": "off",
-        "useKeyWithClickEvents": "off"
+        "useKeyWithClickEvents": "off",
+        "noAutofocus": "off"
       }
     }
   },

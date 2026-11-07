@@ -12,8 +12,8 @@
   --teal: #2ec4b6;
   --magenta: #e6399b;
 
-  --font-display: 'Rubik Mono One', 'Arial Black', sans-serif;
-  --font-body: 'IBM Plex Mono', ui-monospace, Menlo, monospace;
+  --font-display: "Rubik Mono One", "Arial Black", sans-serif;
+  --font-body: "IBM Plex Mono", ui-monospace, Menlo, monospace;
 
   font-family: var(--font-body);
   color: var(--cream);

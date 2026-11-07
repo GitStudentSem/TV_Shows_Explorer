@@ -1,9 +1,11 @@
-import styles from './ColorBars.module.css'
-import type { ColorBarsProps } from "./ColorBars"
+import type { ColorBarsProps } from "./ColorBars";
+import styles from "./ColorBars.module.css";
 
-export function usePresenter({ className}:ColorBarsProps) {
-    const classNames = className ? `${styles.colorBars} ${className}` : styles.colorBars
+export function usePresenter({ className }: ColorBarsProps) {
+  const classNames = className
+    ? `${styles.colorBars} ${className}`
+    : styles.colorBars;
   return {
-   classNames,
-  }
+    classNames,
+  };
 }
