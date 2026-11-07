@@ -1,10 +1,7 @@
-import type { ComponentProps } from "react"
 import styles from './ColorBars.module.css'
+import type { ColorBarsProps } from "./ColorBars"
 
-interface UsePresenterProps extends ComponentProps<'div'> {
-  className?: string
-}
-export function usePresenter({ className}:UsePresenterProps) {
+export function usePresenter({ className}:ColorBarsProps) {
     const classNames = className ? `${styles.colorBars} ${className}` : styles.colorBars
   return {
    classNames,
