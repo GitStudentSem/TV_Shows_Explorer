@@ -1,0 +1,15 @@
+.colorBars {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(
+    90deg,
+    #e8e8e8 0 14.28%,
+    var(--yellow) 14.28% 28.56%,
+    var(--teal) 28.56% 42.84%,
+    #43b649 42.84% 57.12%,
+    var(--magenta) 57.12% 71.4%,
+    var(--orange) 71.4% 85.68%,
+    #2b49c4 85.68%
+  );
+}

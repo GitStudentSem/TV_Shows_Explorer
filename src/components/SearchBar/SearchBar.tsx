@@ -1,6 +1,7 @@
 import { observer } from 'mobx-react-lite'
 import type { FormEvent } from 'react'
-import { showsStore } from '../stores/ShowsStore'
+import { showsStore } from '../../stores/ShowsStore'
+import styles from './SearchBar.module.css'
 
 export const SearchBar = observer(function SearchBar() {
   const handleSubmit = (event: FormEvent) => {
@@ -9,13 +10,13 @@ export const SearchBar = observer(function SearchBar() {
   }
 
   return (
-    <form className="search" role="search" onSubmit={handleSubmit}>
-      <label className="search__label" htmlFor="show-search">
+    <form className={styles.search} role="search" onSubmit={handleSubmit}>
+      <label className={styles.label} htmlFor="show-search">
         Поиск сериала
       </label>
       <input
         id="show-search"
-        className="search__input"
+        className={styles.input}
         type="search"
         placeholder="Что сегодня смотрим?"
         autoComplete="off"

@@ -1,0 +1,39 @@
+.chips {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.chip {
+  min-height: 36px;
+  padding: 4px 10px;
+  border: 2px solid var(--cream);
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--cream);
+  background: transparent;
+  transition: background-color 120ms, color 120ms;
+}
+
+.chip:hover {
+  background: var(--panel-line);
+}
+
+.chip[aria-pressed='true'] {
+  border-color: var(--yellow);
+  color: var(--ink);
+  background: var(--yellow);
+}
+
+.chipCount {
+  opacity: 0.7;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chip {
+    transition: none;
+  }
+}

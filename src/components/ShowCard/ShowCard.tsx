@@ -1,4 +1,6 @@
-import type { Show } from '../api/tvmaze'
+import type { Show } from '../../api/tvmaze'
+import { ColorBars } from '../ColorBars/ColorBars'
+import styles from './ShowCard.module.css'
 
 interface ShowCardProps {
   show: Show
@@ -24,10 +26,10 @@ export function ShowCard({ show }: ShowCardProps) {
 
   return (
     <li>
-      <article className="card">
+      <article className={styles.card}>
         {show.image ? (
           <img
-            className="card__poster"
+            className={`${styles.poster} ${styles.posterImage}`}
             src={show.image.medium}
             alt={`Постер: ${show.name}`}
             width={210}
@@ -35,36 +37,36 @@ export function ShowCard({ show }: ShowCardProps) {
             loading="lazy"
           />
         ) : (
-          <div className="card__poster color-bars" role="img" aria-label="Постера нет">
-            <span className="color-bars__label">Нет постера</span>
-          </div>
+          <ColorBars className={styles.poster} role="img" aria-label="Постера нет">
+            <span className={styles.posterLabel}>Нет постера</span>
+          </ColorBars>
         )}
 
-        <div className="card__body">
-          <div className="card__heading">
-            <h2 className="card__title">
+        <div className={styles.body}>
+          <div className={styles.heading}>
+            <h2 className={styles.title}>
               <a href={show.url} target="_blank" rel="noreferrer">
                 {show.name}
               </a>
             </h2>
             {show.rating.average !== null && (
-              <span className="card__rating" aria-label={`Рейтинг ${show.rating.average} из 10`}>
+              <span className={styles.rating} aria-label={`Рейтинг ${show.rating.average} из 10`}>
                 ★ {show.rating.average}
               </span>
             )}
           </div>
 
-          {meta.length > 0 && <p className="card__meta">{meta.join(' · ')}</p>}
+          {meta.length > 0 && <p className={styles.meta}>{meta.join(' · ')}</p>}
 
           {show.genres.length > 0 && (
-            <ul className="card__genres" aria-label="Жанры">
+            <ul className={styles.genres} aria-label="Жанры">
               {show.genres.map((genre) => (
                 <li key={genre}>{genre}</li>
               ))}
             </ul>
           )}
 
-          {summary && <p className="card__summary">{summary}</p>}
+          {summary && <p className={styles.summary}>{summary}</p>}
         </div>
       </article>
     </li>

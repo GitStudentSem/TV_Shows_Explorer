@@ -1,5 +1,6 @@
 import { observer } from 'mobx-react-lite'
-import { showsStore } from '../stores/ShowsStore'
+import { showsStore } from '../../stores/ShowsStore'
+import styles from './GenreChips.module.css'
 
 export const GenreChips = observer(function GenreChips() {
   const { genres, selectedGenre, shows } = showsStore
@@ -7,24 +8,24 @@ export const GenreChips = observer(function GenreChips() {
   if (genres.length === 0) return null
 
   return (
-    <div className="chips" role="group" aria-label="Фильтр по жанрам">
+    <div className={styles.chips} role="group" aria-label="Фильтр по жанрам">
       <button
         type="button"
-        className="chip"
+        className={styles.chip}
         aria-pressed={selectedGenre === null}
         onClick={() => showsStore.selectGenre(null)}
       >
-        Все <span className="chip__count">{shows.length}</span>
+        Все <span className={styles.chipCount}>{shows.length}</span>
       </button>
       {genres.map(({ name, count }) => (
         <button
           key={name}
           type="button"
-          className="chip"
+          className={styles.chip}
           aria-pressed={selectedGenre === name}
           onClick={() => showsStore.selectGenre(name)}
         >
-          {name} <span className="chip__count">{count}</span>
+          {name} <span className={styles.chipCount}>{count}</span>
         </button>
       ))}
     </div>

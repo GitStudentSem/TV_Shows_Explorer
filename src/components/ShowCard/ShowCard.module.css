@@ -1,0 +1,110 @@
+.card {
+  display: grid;
+  grid-template-columns: 124px minmax(0, 1fr);
+  gap: 16px;
+  min-height: 190px;
+  padding: 12px;
+  border: 2px solid var(--panel-line);
+  border-radius: 10px;
+  background: var(--panel);
+}
+
+.poster {
+  width: 100%;
+  aspect-ratio: 2 / 3;
+  border: 2px solid var(--ink);
+  border-radius: 4px;
+}
+
+.posterImage {
+  display: block;
+  height: auto;
+  object-fit: cover;
+  background: var(--screen);
+}
+
+.posterLabel {
+  padding: 2px 6px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-align: center;
+  color: var(--cream);
+  background: var(--ink);
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+
+.heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.title {
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  font-weight: 400;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+}
+
+.title a {
+  color: var(--cream);
+  text-decoration: none;
+}
+
+.title a:hover {
+  color: var(--orange);
+  text-decoration: underline;
+}
+
+.rating {
+  flex: none;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--ink);
+  background: var(--yellow);
+}
+
+.meta {
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.genres {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--teal);
+}
+
+.summary {
+  display: -webkit-box;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  overflow: hidden;
+}
+
+@media (max-width: 560px) {
+  .card {
+    grid-template-columns: 84px minmax(0, 1fr);
+    gap: 12px;
+    padding: 10px;
+  }
+
+  .summary {
+    -webkit-line-clamp: 4;
+  }
+}
