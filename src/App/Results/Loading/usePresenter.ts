@@ -1,4 +1,4 @@
-import { PAGE_SIZE } from "../../../stores/ShowsStore";
+import { PAGE_SIZE } from "../../../stores/ShowsListStore";
 
 export function usePresenter() {
   return {

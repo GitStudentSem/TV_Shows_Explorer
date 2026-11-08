@@ -1,19 +1,19 @@
-import { showsStore } from "../../stores/ShowsStore";
+import { showsListStore } from "../../stores/ShowsListStore";
 
 export function usePresenter() {
-  const { page, pageCount } = showsStore;
+  const { page, pageCount } = showsListStore;
   return {
     isVisible: pageCount > 1,
     isFirstPage: page === 1,
     isLastPage: page === pageCount,
-    goPrev: () => showsStore.setPage(page - 1),
-    goNext: () => showsStore.setPage(page + 1),
+    goPrev: () => showsListStore.setPage(page - 1),
+    goNext: () => showsListStore.setPage(page + 1),
     pages: usePages(),
   };
 }
 
 function usePages() {
-  const { page, pageCount } = showsStore;
+  const { page, pageCount } = showsListStore;
 
   return Array.from({ length: pageCount }, (_, index) => {
     const number = index + 1;
@@ -22,7 +22,7 @@ function usePages() {
       label: String(number).padStart(2, "0"),
       ariaLabel: `Страница ${number}`,
       ariaCurrent: number === page ? ("page" as const) : undefined,
-      onClick: () => showsStore.setPage(number),
+      onClick: () => showsListStore.setPage(number),
     };
   });
 }

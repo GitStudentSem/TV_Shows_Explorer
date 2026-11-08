@@ -1,7 +1,9 @@
-import { showsStore } from "../../stores/ShowsStore";
+import { searchStore } from "../../stores/SearchStore";
+import { showsListStore } from "../../stores/ShowsListStore";
 
 export function usePresenter() {
-  const { status, shows, filteredShows, visibleShows } = showsStore;
+  const { status, shows } = searchStore;
+  const { filteredShows, visibleShows } = showsListStore;
   const hasShows = shows.length > 0;
 
   return {

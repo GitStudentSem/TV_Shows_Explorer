@@ -1,8 +1,8 @@
-import { showsStore } from "../../../stores/ShowsStore";
+import { searchStore } from "../../../stores/SearchStore";
 
 export function usePresenter() {
   return {
-    errorMessage: showsStore.errorMessage,
-    retry: () => showsStore.submit(),
+    errorMessage: searchStore.errorMessage,
+    retry: () => searchStore.submit(),
   };
 }

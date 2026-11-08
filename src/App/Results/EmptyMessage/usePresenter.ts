@@ -1,7 +1,7 @@
-import { showsStore } from "../../../stores/ShowsStore";
+import { searchStore } from "../../../stores/SearchStore";
 
 export function usePresenter() {
   return {
-    query: showsStore.query.trim(),
+    query: searchStore.query.trim(),
   };
 }

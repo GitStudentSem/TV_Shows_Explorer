@@ -1,15 +1,15 @@
 import type { ChangeEvent, SubmitEvent } from "react";
-import { showsStore } from "../../stores/ShowsStore";
+import { searchStore } from "../../stores/SearchStore";
 
 export function usePresenter() {
   return {
-    query: showsStore.query,
+    query: searchStore.query,
     handleChange: (event: ChangeEvent<HTMLInputElement>) => {
-      showsStore.setQuery(event.target.value);
+      searchStore.setQuery(event.target.value);
     },
     handleSubmit: (event: SubmitEvent<HTMLFormElement>) => {
       event.preventDefault();
-      showsStore.submit();
+      searchStore.submit();
     },
   };
 }
