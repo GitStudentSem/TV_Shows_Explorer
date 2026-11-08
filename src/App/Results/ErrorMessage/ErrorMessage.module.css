@@ -1,0 +1,26 @@
+.message {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 240px;
+  padding: 16px;
+  border-radius: 10px;
+}
+
+.button {
+  min-height: 44px;
+  padding: 8px 18px;
+  border: 3px solid var(--ink);
+  border-radius: 6px;
+  font-weight: 600;
+  color: var(--ink);
+  background: var(--orange);
+  box-shadow: 3px 3px 0 var(--cream);
+}
+
+.button:active {
+  transform: translate(3px, 3px);
+  box-shadow: none;
+}
