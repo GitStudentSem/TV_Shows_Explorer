@@ -40,6 +40,9 @@ export class SearchStore {
     // Введён другой запрос: ответ на предыдущий уже никому не нужен.
     this.#controller?.abort();
     this.#activeTerm = null;
+    // Показываем загрузку сразу, а не после debounce: иначе на быстром
+    // интернете скелетон лишь мелькает на время запроса.
+    this.#clearResults("loading");
     this.#debounceTimer = setTimeout(() => this.#search(term), DEBOUNCE_MS);
   }
 
