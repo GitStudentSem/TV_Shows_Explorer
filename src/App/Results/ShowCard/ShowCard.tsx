@@ -1,44 +1,36 @@
 import type { Show } from "../../../api/tvmaze";
 import { ColorBars } from "../components/ColorBars/ColorBars";
 import styles from "./ShowCard.module.css";
+import { usePresenter } from "./usePresenter";
 
-interface ShowCardProps {
+export interface ShowCardProps {
   show: Show;
 }
 
-/** API отдаёт описание как HTML. DOMParser не выполняет скрипты, а в разметку идёт только текст. */
-function getPlainText(html: string | null): string {
-  if (!html) return "";
-  return (
-    new DOMParser()
-      .parseFromString(html, "text/html")
-      .body.textContent?.trim() ?? ""
-  );
-}
-
-function getYears({ premiered, ended, status }: Show): string | null {
-  if (!premiered) return null;
-  const start = premiered.slice(0, 4);
-  if (ended)
-    return ended.slice(0, 4) === start
-      ? start
-      : `${start}–${ended.slice(0, 4)}`;
-  return status === "Running" ? `${start}–…` : start;
-}
-
 export function ShowCard({ show }: ShowCardProps) {
-  const summary = getPlainText(show.summary);
-  const channel = show.network?.name ?? show.webChannel?.name;
-  const meta = [getYears(show), channel, show.language].filter(Boolean);
+  const {
+    name,
+    hasImage,
+    url,
+    posterUrl,
+    posterAlt,
+    hasRating,
+    rating,
+    meta,
+    hasMeta,
+    genres,
+    hasGenres,
+    summary,
+  } = usePresenter({ show });
 
   return (
     <li>
       <article className={styles.card}>
-        {show.image ? (
+        {hasImage ? (
           <img
             className={`${styles.poster} ${styles.posterImage}`}
-            src={show.image.medium}
-            alt={`Постер: ${show.name}`}
+            src={posterUrl}
+            alt={posterAlt}
             width={210}
             height={295}
             loading="lazy"
@@ -56,20 +48,18 @@ export function ShowCard({ show }: ShowCardProps) {
         <div className={styles.body}>
           <div className={styles.heading}>
             <h2 className={styles.title}>
-              <a href={show.url} target="_blank" rel="noreferrer">
-                {show.name}
+              <a href={url} target="_blank" rel="noreferrer">
+                {name}
               </a>
             </h2>
-            {show.rating.average !== null && (
-              <span className={styles.rating}>★ {show.rating.average}</span>
-            )}
+            {hasRating && <span className={styles.rating}>★ {rating}</span>}
           </div>
 
-          {meta.length > 0 && <p className={styles.meta}>{meta.join(" · ")}</p>}
+          {hasMeta && <p className={styles.meta}>{meta}</p>}
 
-          {show.genres.length > 0 && (
+          {hasGenres && (
             <ul className={styles.genres} aria-label="Жанры">
-              {show.genres.map((genre) => (
+              {genres.map((genre) => (
                 <li key={genre}>{genre}</li>
               ))}
             </ul>
