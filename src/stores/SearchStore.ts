@@ -20,6 +20,8 @@ export class SearchStore {
   #controller: AbortController | null = null;
   /** Запрос, к которому мы идём: ждём debounce, грузим или уже показываем. */
   #targetTerm: string | null = "";
+  /** Запрос, по которому сервер ничего не нашёл: его продолжения тоже пусты. */
+  #emptyTerm: string | null = null;
 
   constructor() {
     makeAutoObservable(this, {}, { autoBind: true });
@@ -35,17 +37,11 @@ export class SearchStore {
     this.#cancelPending();
     this.#targetTerm = term;
 
-    if (!term) {
-      this.#reset();
-      return;
-    }
-    if (term === this.searchedTerm) {
-      // Вернулись к показанному запросу до debounce: его выдача по-прежнему
-      // актуальна, а вместе с ней сохраняются выбранный жанр и страница.
-      this.status = "success";
-      this.errorMessage = null;
-      return;
-    }
+    if (!term) return this.#showResults("", [], "idle");
+    // Вернулись к показанному запросу до debounce: его выдача по-прежнему
+    // актуальна, а вместе с ней сохраняются выбранный жанр и страница.
+    if (term === this.searchedTerm) return this.#showResults(term, this.shows);
+    if (this.#isKnownEmpty(term)) return this.#showResults(term, []);
 
     // Показываем загрузку сразу, а не после debounce: иначе на быстром
     // интернете скелетон лишь мелькает на время запроса.
@@ -63,6 +59,12 @@ export class SearchStore {
     }
   }
 
+  #isKnownEmpty(term: string) {
+    // TVmaze ищет без учёта регистра.
+    const prefix = this.#emptyTerm?.toLowerCase();
+    return prefix !== undefined && term.toLowerCase().startsWith(prefix);
+  }
+
   #cancelPending() {
     clearTimeout(this.#debounceTimer);
     this.#debounceTimer = undefined;
@@ -70,11 +72,13 @@ export class SearchStore {
     this.#controller = null;
   }
 
-  #reset() {
-    this.status = "idle";
-    this.shows = [];
-    this.errorMessage = null;
-    this.searchedTerm = "";
+  #showResults(term: string, shows: Show[], status: SearchStatus = "success") {
+    runInAction(() => {
+      this.status = status;
+      this.shows = shows;
+      this.searchedTerm = term;
+      this.errorMessage = null;
+    });
   }
 
   async #search(term: string) {
@@ -91,11 +95,8 @@ export class SearchStore {
       const shows = await searchShows(term, controller.signal);
       if (controller.signal.aborted) return;
 
-      runInAction(() => {
-        this.shows = shows;
-        this.searchedTerm = term;
-        this.status = "success";
-      });
+      if (shows.length === 0) this.#emptyTerm = term;
+      this.#showResults(term, shows);
     } catch (error) {
       if (controller.signal.aborted) return;
 
