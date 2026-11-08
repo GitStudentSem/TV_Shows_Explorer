@@ -10,15 +10,16 @@ export type SearchStatus = "idle" | "loading" | "success" | "error";
 export class SearchStore {
   query = "";
   status: SearchStatus = "idle";
+  /** Последняя успешная выдача. Пока идёт загрузка нового запроса, не стирается. */
   shows: Show[] = [];
   errorMessage: string | null = null;
-  /** Запрос, по которому получена текущая выдача (query может уже уйти вперёд). */
+  /** Запрос, по которому получена выдача `shows` (query может уже уйти вперёд). */
   searchedTerm = "";
 
   #debounceTimer: ReturnType<typeof setTimeout> | undefined;
   #controller: AbortController | null = null;
-  /** Запрос, результат которого сейчас загружается или показан на экране. */
-  #activeTerm: string | null = null;
+  /** Запрос, к которому мы идём: ждём debounce, грузим или уже показываем. */
+  #targetTerm: string | null = "";
 
   constructor() {
     makeAutoObservable(this, {}, { autoBind: true });
@@ -26,50 +27,64 @@ export class SearchStore {
 
   setQuery(value: string) {
     this.query = value;
-    clearTimeout(this.#debounceTimer);
 
     const term = value.trim();
+    if (term === this.#targetTerm) return;
+
+    // Введён другой запрос: ожидание и ответ на предыдущий уже не нужны.
+    this.#cancelPending();
+    this.#targetTerm = term;
+
     if (!term) {
-      this.#controller?.abort();
-      this.#activeTerm = null;
-      this.#clearResults("idle");
+      this.#reset();
       return;
     }
-    if (term === this.#activeTerm) return;
+    if (term === this.searchedTerm) {
+      // Вернулись к показанному запросу до debounce: его выдача по-прежнему
+      // актуальна, а вместе с ней сохраняются выбранный жанр и страница.
+      this.status = "success";
+      this.errorMessage = null;
+      return;
+    }
 
-    // Введён другой запрос: ответ на предыдущий уже никому не нужен.
-    this.#controller?.abort();
-    this.#activeTerm = null;
     // Показываем загрузку сразу, а не после debounce: иначе на быстром
     // интернете скелетон лишь мелькает на время запроса.
-    this.#clearResults("loading");
+    this.status = "loading";
+    this.errorMessage = null;
     this.#debounceTimer = setTimeout(() => this.#search(term), DEBOUNCE_MS);
   }
 
   /** Enter и кнопка «Повторить»: запускают поиск сразу, не дожидаясь debounce. */
   submit() {
-    clearTimeout(this.#debounceTimer);
-
     const term = this.query.trim();
-    if (term && term !== this.#activeTerm) this.#search(term);
+    const isWaitingDebounce = this.#debounceTimer !== undefined;
+    if (term && (isWaitingDebounce || this.status === "error")) {
+      this.#search(term);
+    }
   }
 
-  #clearResults(status: SearchStatus) {
-    runInAction(() => {
-      this.status = status;
-      this.shows = [];
-      this.errorMessage = null;
-    });
+  #cancelPending() {
+    clearTimeout(this.#debounceTimer);
+    this.#debounceTimer = undefined;
+    this.#controller?.abort();
+    this.#controller = null;
+  }
+
+  #reset() {
+    this.status = "idle";
+    this.shows = [];
+    this.errorMessage = null;
+    this.searchedTerm = "";
   }
 
   async #search(term: string) {
-    this.#controller?.abort();
+    this.#cancelPending();
     const controller = new AbortController();
     this.#controller = controller;
-    this.#activeTerm = term;
+    this.#targetTerm = term;
     runInAction(() => {
-      this.#clearResults("loading");
-      this.searchedTerm = term;
+      this.status = "loading";
+      this.errorMessage = null;
     });
 
     try {
@@ -78,13 +93,14 @@ export class SearchStore {
 
       runInAction(() => {
         this.shows = shows;
+        this.searchedTerm = term;
         this.status = "success";
       });
     } catch (error) {
       if (controller.signal.aborted) return;
 
       // Сбрасываем, чтобы тот же запрос можно было отправить повторно.
-      this.#activeTerm = null;
+      this.#targetTerm = null;
       runInAction(() => {
         this.errorMessage = getErrorMessage(error);
         this.status = "error";

@@ -1,9 +1,11 @@
+import { searchStore } from "../../stores/SearchStore";
 import { showsListStore } from "../../stores/ShowsListStore";
 
 export function usePresenter() {
   const { page, pageCount } = showsListStore;
   return {
-    isVisible: pageCount > 1,
+    // Во время загрузки в сторе лежит прежняя выдача — её страницы не показываем.
+    isVisible: searchStore.status === "success" && pageCount > 1,
     isFirstPage: page === 1,
     isLastPage: page === pageCount,
     goPrev: () => showsListStore.setPage(page - 1),
