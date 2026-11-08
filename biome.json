@@ -21,7 +21,7 @@
       "style": {
         "noExcessiveLinesPerFile": {
           "level": "error",
-          "options": { "maxLines": 150 }
+          "options": { "maxLines": 120 }
         },
         "useComponentExportOnlyModules": {
           "level": "warn",
