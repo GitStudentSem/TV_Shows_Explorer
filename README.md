@@ -6,7 +6,7 @@
 
 Главное в проекте — архитектура, а не функциональность. Правила, по которым он
 написан, собраны в [`ARCHITECTURE.md`](ARCHITECTURE.md); исходный конспект
-урока лежит в [`conspects/Lesson_1.md`](conspects/Lesson_1.md).
+урока лежит в [`conspects/01-layers-and-structure.md`](conspects/01-layers-and-structure.md).
 
 Стек: React 19, MobX, TypeScript, Vite, Biome (линтер и форматтер).
 
@@ -68,14 +68,9 @@ npm run build   # типы и сборка проходят без ошибок
 
 ## Архитектура в двух словах
 
-Каждый компонент разделён на два файла:
-
-- **View** (`Component.tsx`) — только JSX и вызов `usePresenter()`. Никаких
-  вычислений, форматирования и обработчиков с логикой.
-- **Presenter** (`usePresenter.ts`) — достаёт данные из MobX-сторов и отдаёт View
-  готовые значения и обработчики. Если Presenter разрастается, части выносятся
-  в отдельные хуки с понятными именами (пример — `usePages` в
-  [`Pagination/usePresenter.ts`](src/App/Pagination/usePresenter.ts)).
+Компонент делится на View (`Component.tsx`, только JSX) и Presenter
+(`usePresenter.ts`, готовит данные). Полные правила — в
+[`ARCHITECTURE.md`](ARCHITECTURE.md), разделы 1 и 7.
 
 Поток данных:
 
