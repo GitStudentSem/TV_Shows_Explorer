@@ -11,8 +11,10 @@ export function ShowCard({ show }: ShowCardProps) {
   const {
     name,
     url,
+    hasPoster,
     posterUrl,
     posterAlt,
+    posterImageClassName,
     hasRating,
     rating,
     meta,
@@ -20,14 +22,15 @@ export function ShowCard({ show }: ShowCardProps) {
     genres,
     hasGenres,
     summary,
+    hasSummary,
   } = usePresenter({ show });
 
   return (
     <li>
       <article className={styles.card}>
-        {posterUrl ? (
+        {hasPoster ? (
           <img
-            className={`${styles.poster} ${styles.posterImage}`}
+            className={posterImageClassName}
             src={posterUrl}
             alt={posterAlt}
             width={210}
@@ -64,7 +67,7 @@ export function ShowCard({ show }: ShowCardProps) {
             </ul>
           )}
 
-          {summary && <p className={styles.summary}>{summary}</p>}
+          {hasSummary && <p className={styles.summary}>{summary}</p>}
         </div>
       </article>
     </li>

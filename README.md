@@ -13,7 +13,12 @@ npm run dev
 
 ## Как устроены запросы
 
-Запросы написаны без `useQuery`, логика находится в [`src/stores/ShowsStore.ts`](src/stores/ShowsStore.ts):
+Запросы написаны без `useQuery`, логика разделена на два MobX-стора:
+
+- [`src/stores/SearchStore.ts`](src/stores/SearchStore.ts) — строка запроса, debounce, отмена запросов, статусы загрузки;
+- [`src/stores/ShowsListStore.ts`](src/stores/ShowsListStore.ts) — жанры, фильтр и пагинация поверх полученной выдачи.
+
+Поведение:
 
 - поиск запускается через 400 мс после последнего символа, Enter запускает его сразу;
 - `AbortController` отменяет предыдущий запрос, как только введён новый;

@@ -3,7 +3,7 @@ import { createRoot } from "react-dom/client";
 import "./index.css";
 import App from "./App/App.tsx";
 
-// biome-ignore lint/style/noNonNullAssertion: <ths is the rot node, it will always exist>
+// biome-ignore lint/style/noNonNullAssertion: #root is declared in index.html and always exists
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <App />

@@ -12,6 +12,8 @@ export class SearchStore {
   status: SearchStatus = "idle";
   shows: Show[] = [];
   errorMessage: string | null = null;
+  /** Запрос, по которому получена текущая выдача (query может уже уйти вперёд). */
+  searchedTerm = "";
 
   #debounceTimer: ReturnType<typeof setTimeout> | undefined;
   #controller: AbortController | null = null;
@@ -62,7 +64,10 @@ export class SearchStore {
     const controller = new AbortController();
     this.#controller = controller;
     this.#activeTerm = term;
-    this.#clearResults("loading");
+    runInAction(() => {
+      this.#clearResults("loading");
+      this.searchedTerm = term;
+    });
 
     try {
       const shows = await searchShows(term, controller.signal);
