@@ -16,4 +16,4 @@
   - `chore/` — настройки, зависимости, CI
 - Сообщения коммитов: коротко, на английском, в нижнем регистре, как в истории проекта (`tune debounce and empty state`).
 - В `main` ветка попадает только через Pull Request со squash merge. Merge делается только после явного подтверждения пользователя.
-- Перед открытием PR должны проходить `npm run check` и `npm run build`.
+- Проверки делают git-хуки (`simple-git-hooks`, скрипты в `scripts/hooks/`): `pre-commit` запрещает коммит в `main` и гоняет Biome по файлам коммита, `pre-push` запрещает push в `main` и запускает `npm run build`. Не обходи их через `--no-verify`. После клонирования хуки ставятся сами при `npm install`.
