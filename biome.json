@@ -22,7 +22,14 @@
         "noExcessiveLinesPerFile": {
           "level": "error",
           "options": { "maxLines": 150 }
+        },
+        "useComponentExportOnlyModules": {
+          "level": "warn",
+          "options": { "allowConstantExport": true }
         }
+      },
+      "correctness": {
+        "useHookAtTopLevel": "error"
       },
       "a11y": {
         "noStaticElementInteractions": "off",

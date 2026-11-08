@@ -39,7 +39,6 @@ export function usePresenter({ show }: ShowCardProps) {
   return {
     name: show.name,
     url: show.url,
-    hasImage: show.image !== null,
     posterUrl: show.image?.medium,
     posterAlt: `Постер: ${show.name}`,
     hasRating: show.rating.average !== null,

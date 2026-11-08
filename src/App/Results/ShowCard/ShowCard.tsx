@@ -10,7 +10,6 @@ export interface ShowCardProps {
 export function ShowCard({ show }: ShowCardProps) {
   const {
     name,
-    hasImage,
     url,
     posterUrl,
     posterAlt,
@@ -26,7 +25,7 @@ export function ShowCard({ show }: ShowCardProps) {
   return (
     <li>
       <article className={styles.card}>
-        {hasImage ? (
+        {posterUrl ? (
           <img
             className={`${styles.poster} ${styles.posterImage}`}
             src={posterUrl}

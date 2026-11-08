@@ -6,7 +6,7 @@ export const Pagination = observer(function Pagination() {
   const { isVisible, isFirstPage, isLastPage, goPrev, goNext, pages } =
     usePresenter();
 
-  if (isVisible) return null;
+  if (!isVisible) return null;
 
   return (
     <nav className={styles.pagination} aria-label="Страницы результатов">
