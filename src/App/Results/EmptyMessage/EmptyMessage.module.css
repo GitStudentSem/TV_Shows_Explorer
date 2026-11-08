@@ -8,3 +8,9 @@
   padding: 16px;
   border-radius: 10px;
 }
+
+.testCard {
+  font-size: 0.625rem;
+  color: var(--screen);
+  user-select: none;
+}

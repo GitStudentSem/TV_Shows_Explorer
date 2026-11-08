@@ -13,6 +13,9 @@ export const EmptyMessage = observer(function EmptyMessage() {
           По запросу «{searchedTerm}» на этом канале пусто. Попробуйте другое
           название.
         </p>
+        <span className={styles.testCard} aria-hidden="true">
+          Настроечная таблица 0249-ПС
+        </span>
       </MessagePanel>
     </div>
   );

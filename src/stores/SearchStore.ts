@@ -2,7 +2,7 @@ import { makeAutoObservable, runInAction } from "mobx";
 import { type Show, searchShows } from "../api/tvmaze";
 import { getErrorMessage } from "./getErrorMessage";
 
-export const DEBOUNCE_MS = 400;
+export const DEBOUNCE_MS = 370;
 
 export type SearchStatus = "idle" | "loading" | "success" | "error";
 
