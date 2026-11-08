@@ -22,15 +22,15 @@ npm run dev        # http://localhost:5173
 
 ## Команды
 
-| Команда             | Что делает                                                  |
-| ------------------- | ----------------------------------------------------------- |
-| `npm run dev`       | Dev-сервер Vite с hot reload                                |
-| `npm run build`     | Проверка типов (`tsc -b`) и production-сборка в `dist/`     |
-| `npm run preview`   | Запуск собранной версии из `dist/`                          |
-| `npm run check`     | Biome: линтер + форматирование + порядок импортов           |
-| `npm run check:fix` | То же, с автоисправлением                                   |
-| `npm run lint`      | Только линтер                                               |
-| `npm run format`    | Только форматирование (с записью)                           |
+| Команда             | Что делает                                              |
+| ------------------- | ------------------------------------------------------- |
+| `npm run dev`       | Dev-сервер Vite с hot reload                            |
+| `npm run build`     | Проверка типов (`tsc -b`) и production-сборка в `dist/` |
+| `npm run preview`   | Запуск собранной версии из `dist/`                      |
+| `npm run check`     | Biome: линтер + форматирование + порядок импортов       |
+| `npm run check:fix` | То же, с автоисправлением                               |
+| `npm run lint`      | Только линтер                                           |
+| `npm run format`    | Только форматирование (с записью)                       |
 
 ## Как проверить проект
 
@@ -56,15 +56,15 @@ npm run build   # типы и сборка проходят без ошибок
 
 После `npm run dev`:
 
-| Сценарий                                                  | Ожидаемый результат                                         |
-| --------------------------------------------------------- | ----------------------------------------------------------- |
-| Ввести `girls` и подождать                                | Через ~400 мс появляется выдача и счётчик «Найдено: N»      |
-| Ввести запрос и сразу нажать Enter                        | Поиск стартует без ожидания debounce                        |
-| Быстро печатать, открыв DevTools → Network                | Предыдущие запросы помечены как `canceled`                  |
-| Кликнуть по жанру                                         | Выдача и счётчик фильтруются, страница сбрасывается на 01   |
-| Листать страницы (по 3 сериала на странице)               | Работают стрелки и номера, текущая страница подсвечена      |
-| Ввести бессмыслицу, например `qqqzzzxxx`                  | Сообщение «Ничего не найдено»                               |
-| DevTools → Network → Offline, затем ввести запрос          | Сообщение об ошибке и кнопка «Повторить»                    |
+| Сценарий                                          | Ожидаемый результат                                       |
+| ------------------------------------------------- | --------------------------------------------------------- |
+| Ввести `girls` и подождать                        | Через ~400 мс появляется выдача и счётчик «Найдено: N»    |
+| Ввести запрос и сразу нажать Enter                | Поиск стартует без ожидания debounce                      |
+| Быстро печатать, открыв DevTools → Network        | Предыдущие запросы помечены как `canceled`                |
+| Кликнуть по жанру                                 | Выдача и счётчик фильтруются, страница сбрасывается на 01 |
+| Листать страницы (по 3 сериала на странице)       | Работают стрелки и номера, текущая страница подсвечена    |
+| Ввести бессмыслицу, например `qqqzzzxxx`          | Сообщение «Ничего не найдено»                             |
+| DevTools → Network → Offline, затем ввести запрос | Сообщение об ошибке и кнопка «Повторить»                  |
 
 ## Архитектура в двух словах
 
@@ -121,18 +121,18 @@ src/
 
 Соответствие правилам из [`ARCHITECTURE.md`](ARCHITECTURE.md) и где это видно:
 
-| Правило                                     | Пример в коде                                                                                                                   |
-| ------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
-| 1.1 View — только JSX                       | [`Results/Results.tsx`](src/App/Results/Results.tsx) — флаги и списки приходят готовыми                                         |
-| 1.2 Presenter готовит данные                | [`Results/usePresenter.ts`](src/App/Results/usePresenter.ts) — статусы стора превращаются в `isLoading`, `isEmpty` и т. д.        |
-| 1.3 Логика в именованных хуках              | [`Pagination/usePresenter.ts`](src/App/Pagination/usePresenter.ts) — `usePages`                                                 |
-| 2.1 Не больше 120 строк                     | Проверяется `npm run check`; самый длинный TS-файл — [`SearchStore.ts`](src/stores/SearchStore.ts), 93 строки                    |
-| 3.1–3.3 Дерево папок = дерево компонентов   | [`src/App/`](src/App/)                                                                                                          |
-| 4.2 Локальная папка `components`            | [`Results/components/`](src/App/Results/components/) — используется только внутри ветки Results                                  |
-| 5.1–5.2 Именование                          | `SearchBar/SearchBar.tsx` + `SearchBar/usePresenter.ts`                                                                         |
-| 7.1 Стор читает только Presenter            | Ни один `.tsx` не импортирует `stores/`: `grep -rl stores src/App --include='*.tsx'` пуст                                        |
-| 7.3.1 Ранний выход во View                  | [`Pagination/Pagination.tsx`](src/App/Pagination/Pagination.tsx) — `if (!isVisible) return null`                                |
-| 7.4 Без логики — без Presenter              | [`App.tsx`](src/App/App.tsx) и [`MessagePanel`](src/App/Results/components/MessagePanel/MessagePanel.tsx) не имеют `usePresenter` |
+| Правило                                   | Пример в коде                                                                                                                     |
+| ----------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| 1.1 View — только JSX                     | [`Results/Results.tsx`](src/App/Results/Results.tsx) — флаги и списки приходят готовыми                                           |
+| 1.2 Presenter готовит данные              | [`Results/usePresenter.ts`](src/App/Results/usePresenter.ts) — статусы стора превращаются в `isLoading`, `isEmpty` и т. д.        |
+| 1.3 Логика в именованных хуках            | [`Pagination/usePresenter.ts`](src/App/Pagination/usePresenter.ts) — `usePages`                                                   |
+| 2.1 Не больше 120 строк                   | Проверяется `npm run check`; самый длинный TS-файл — [`SearchStore.ts`](src/stores/SearchStore.ts), 93 строки                     |
+| 3.1–3.3 Дерево папок = дерево компонентов | [`src/App/`](src/App/)                                                                                                            |
+| 4.2 Локальная папка `components`          | [`Results/components/`](src/App/Results/components/) — используется только внутри ветки Results                                   |
+| 5.1–5.2 Именование                        | `SearchBar/SearchBar.tsx` + `SearchBar/usePresenter.ts`                                                                           |
+| 7.1 Стор читает только Presenter          | Ни один `.tsx` не импортирует `stores/`: `grep -rl stores src/App --include='*.tsx'` пуст                                         |
+| 7.3.1 Ранний выход во View                | [`Pagination/Pagination.tsx`](src/App/Pagination/Pagination.tsx) — `if (!isVisible) return null`                                  |
+| 7.4 Без логики — без Presenter            | [`App.tsx`](src/App/App.tsx) и [`MessagePanel`](src/App/Results/components/MessagePanel/MessagePanel.tsx) не имеют `usePresenter` |
 
 ## Как устроены запросы
 
