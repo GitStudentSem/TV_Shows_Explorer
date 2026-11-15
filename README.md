@@ -5,8 +5,11 @@
 разбивает выдачу на страницы.
 
 Главное в проекте — архитектура, а не функциональность. Правила, по которым он
-написан, собраны в [`ARCHITECTURE.md`](ARCHITECTURE.md); исходный конспект
-урока лежит в [`conspects/01-layers-and-structure.md`](conspects/01-layers-and-structure.md).
+написан, собраны в [`ARCHITECTURE.md`](ARCHITECTURE.md); исходные конспекты
+уроков лежат в [`conspects/`](conspects/).
+
+Код пока приведён к правилам только первого урока. Расхождения с уроком 2
+перечислены в правиле 8.7 `ARCHITECTURE.md`.
 
 Стек: React 19, MobX, TypeScript, Vite, Biome (линтер и форматтер).
 
@@ -44,8 +47,8 @@ npm run build   # типы и сборка проходят без ошибок
 Часть архитектурных правил проверяется линтером автоматически, настройки в
 [`biome.json`](biome.json):
 
-- `noExcessiveLinesPerFile: 120` — правило 2.1, ни один файл не длиннее 120
-  строк. Нарушение — ошибка, а не предупреждение;
+- `noExcessiveLinesPerFile: 120` — правило 2.1, ни один файл кода не длиннее
+  120 строк (`.md` не в счёт). Нарушение — ошибка, а не предупреждение;
 - `useHookAtTopLevel` — хуки (`usePresenter` и вложенные) вызываются только на
   верхнем уровне.
 
@@ -58,7 +61,7 @@ npm run build   # типы и сборка проходят без ошибок
 
 | Сценарий                                          | Ожидаемый результат                                       |
 | ------------------------------------------------- | --------------------------------------------------------- |
-| Ввести `girls` и подождать                        | Через ~400 мс появляется выдача и счётчик «Найдено: N»    |
+| Ввести `girls` и подождать                        | Через ~370 мс появляется выдача и счётчик «Найдено: N»    |
 | Ввести запрос и сразу нажать Enter                | Поиск стартует без ожидания debounce                      |
 | Быстро печатать, открыв DevTools → Network        | Предыдущие запросы помечены как `canceled`                |
 | Кликнуть по жанру                                 | Выдача и счётчик фильтруются, страница сбрасывается на 01 |
@@ -70,7 +73,7 @@ npm run build   # типы и сборка проходят без ошибок
 
 Компонент делится на View (`Component.tsx`, только JSX) и Presenter
 (`usePresenter.ts`, готовит данные). Полные правила — в
-[`ARCHITECTURE.md`](ARCHITECTURE.md), разделы 1 и 7.
+[`ARCHITECTURE.md`](ARCHITECTURE.md), разделы 1, 7 и 8.
 
 Поток данных:
 
@@ -109,8 +112,9 @@ src/
     └── Pagination/              переключатель страниц
 ```
 
-В каждой папке компонента лежат `Component.tsx` (View), `usePresenter.ts`
-(Presenter) и `Component.module.css` (стили).
+Сейчас в каждой папке компонента лежат `Component.tsx` (View), `usePresenter.ts`
+(Presenter) и `Component.module.css` (стили). По правилу 3.4 Presenter переедет
+в `logic/`, это запланировано (8.7).
 
 ## На что обратить внимание при ревью
 
@@ -121,13 +125,13 @@ src/
 | 1.1 View — только JSX                     | [`Results/Results.tsx`](src/App/Results/Results.tsx) — флаги и списки приходят готовыми                                           |
 | 1.2 Presenter готовит данные              | [`Results/usePresenter.ts`](src/App/Results/usePresenter.ts) — статусы стора превращаются в `isLoading`, `isEmpty` и т. д.        |
 | 1.3 Логика в именованных хуках            | [`Pagination/usePresenter.ts`](src/App/Pagination/usePresenter.ts) — `usePages`                                                   |
-| 2.1 Не больше 120 строк                   | Проверяется `npm run check`; самый длинный TS-файл — [`SearchStore.ts`](src/stores/SearchStore.ts), 93 строки                     |
+| 2.1 Не больше 120 строк                   | Проверяется `npm run check`; самый длинный TS-файл — [`SearchStore.ts`](src/stores/SearchStore.ts), 103 строки                    |
 | 3.1–3.3 Дерево папок = дерево компонентов | [`src/App/`](src/App/)                                                                                                            |
 | 4.2 Локальная папка `components`          | [`Results/components/`](src/App/Results/components/) — используется только внутри ветки Results                                   |
 | 5.1–5.2 Именование                        | `SearchBar/SearchBar.tsx` + `SearchBar/usePresenter.ts`                                                                           |
-| 7.1 Стор читает только Presenter          | Ни один `.tsx` не импортирует `stores/`: `grep -rl stores src/App --include='*.tsx'` пуст                                         |
-| 7.3.1 Ранний выход во View                | [`Pagination/Pagination.tsx`](src/App/Pagination/Pagination.tsx) — `if (!isVisible) return null`                                  |
-| 7.4 Без логики — без Presenter            | [`App.tsx`](src/App/App.tsx) и [`MessagePanel`](src/App/Results/components/MessagePanel/MessagePanel.tsx) не имеют `usePresenter` |
+| 8.1 View не обращается к стору            | Ни один `.tsx` не импортирует `stores/`: `grep -rl stores src/App --include='*.tsx'` пуст                                         |
+| 8.4.1 Ранний выход во View                | [`Pagination/Pagination.tsx`](src/App/Pagination/Pagination.tsx) — `if (!isVisible) return null`                                  |
+| 8.5 Без логики — без Presenter            | [`App.tsx`](src/App/App.tsx) и [`MessagePanel`](src/App/Results/components/MessagePanel/MessagePanel.tsx) не имеют `usePresenter` |
 
 ## Как устроены запросы
 
@@ -140,7 +144,7 @@ src/
 
 Поведение:
 
-- поиск запускается через 400 мс после последнего символа, Enter запускает его
+- поиск запускается через 370 мс после последнего символа, Enter запускает его
   сразу;
 - `AbortController` отменяет предыдущий запрос, как только введён новый;
 - состояния `idle`, `loading`, `success` и `error` хранятся в сторе, при ошибке
