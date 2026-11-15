@@ -11,7 +11,8 @@
   overflow: hidden;
 }
 
-/* Image surfaces slowly: blurred and dim at first, like a cold tube. */
+/* Image surfaces slowly, like a cold tube. Starts after the switch-on
+   (SWITCH_ON_MS in App/logic/useWarmUp), so a warm server never shows it. */
 .content {
   position: relative;
   display: flex;
@@ -22,8 +23,8 @@
   text-align: center;
   opacity: 0;
   animation:
-    warm-up 5s 1.2s ease-out forwards,
-    flicker 3s 6.2s infinite;
+    warm-up 5s 1.6s ease-out forwards,
+    flicker 3s 6.6s infinite;
 }
 
 .title {

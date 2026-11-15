@@ -6,13 +6,27 @@ import { GenreChips } from "./GenreChips/GenreChips";
 import { Loading } from "./Loading/Loading";
 import { usePresenter } from "./logic/usePresenter";
 import styles from "./Results.module.css";
+import { WarmUpScreen } from "./WarmUpScreen/WarmUpScreen";
 
-export const Results = observer(function Results() {
-  const { isLoading, isError, isEmpty, isSuccess, foundCount, visibleShows } =
-    usePresenter();
+export interface ResultsProps {
+  /** Телевизор ещё включается: вместо выдачи показываем кинескоп. */
+  isWarmingUp: boolean;
+}
+
+export const Results = observer(function Results(props: ResultsProps) {
+  const {
+    isWarmingUp,
+    isLoading,
+    isError,
+    isEmpty,
+    isSuccess,
+    foundCount,
+    visibleShows,
+  } = usePresenter(props);
 
   return (
-    <>
+    <div className={styles.results}>
+      {isWarmingUp && <WarmUpScreen />}
       {isLoading && <Loading />}
       {isError && <ErrorMessage />}
       {isEmpty && <EmptyMessage />}
@@ -29,6 +43,6 @@ export const Results = observer(function Results() {
           </ul>
         </>
       )}
-    </>
+    </div>
   );
 });

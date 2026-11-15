@@ -5,7 +5,8 @@ export function usePresenter({ isOpen, onToggle }: FavoritesButtonProps) {
   const { count, status } = favoritesStore;
 
   return {
-    label: isOpen ? "← К поиску" : "★ Избранное",
+    icon: isOpen ? "←" : "✦",
+    label: isOpen ? "К поиску" : "Избранное",
     // Пока список грузится или не загрузился, число неизвестно.
     hasCount: !isOpen,
     countText: status === "ready" ? String(count) : "…",

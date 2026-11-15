@@ -1,5 +1,6 @@
 import { observer } from "mobx-react-lite";
 import type { Show } from "../../../../api/shows";
+import { Glyph } from "../../Glyph/Glyph";
 import styles from "./FavoriteStar.module.css";
 import { usePresenter } from "./logic/usePresenter";
 
@@ -23,7 +24,7 @@ export const FavoriteStar = observer(function FavoriteStar({
       disabled={isDisabled}
       onClick={handleClick}
     >
-      {icon}
+      <Glyph>{icon}</Glyph>
     </button>
   );
 });

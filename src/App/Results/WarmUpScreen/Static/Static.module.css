@@ -14,7 +14,7 @@
     );
   opacity: 0;
   animation:
-    fade-in 0.6s 1.2s forwards,
+    fade-in 0.6s 1.6s forwards,
     jitter 0.25s steps(4) infinite;
 }
 

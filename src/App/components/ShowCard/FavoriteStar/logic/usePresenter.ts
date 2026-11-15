@@ -22,7 +22,7 @@ export function usePresenter(show: Show) {
   };
 
   return {
-    icon: isFavorite ? "★" : "☆",
+    icon: isFavorite ? "✦" : "✧",
     isPressed: isFavorite,
     isDisabled: isPending,
     label: isFavorite

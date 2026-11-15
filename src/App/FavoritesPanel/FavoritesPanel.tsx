@@ -1,4 +1,5 @@
 import { observer } from "mobx-react-lite";
+import { Glyph } from "../components/Glyph/Glyph";
 import { MessagePanel } from "../components/MessagePanel/MessagePanel";
 import { ShowCard } from "../components/ShowCard/ShowCard";
 import styles from "./FavoritesPanel.module.css";
@@ -32,7 +33,9 @@ export const FavoritesPanel = observer(function FavoritesPanel() {
       {isEmpty && (
         <div className={styles.message}>
           <MessagePanel title="Пока пусто">
-            <p>Нажмите ☆ на карточке сериала, и он появится здесь.</p>
+            <p>
+              Нажмите <Glyph>✧</Glyph> на карточке сериала, и он появится здесь.
+            </p>
           </MessagePanel>
         </div>
       )}
