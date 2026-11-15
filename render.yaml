@@ -1,0 +1,16 @@
+# Render Blueprint: backend as a long-running Node process (ARCHITECTURE.md 9.7).
+# The client is deployed separately to GitHub Pages.
+services:
+  - type: web
+    name: tv-shows-explorer-api
+    runtime: node
+    plan: free
+    rootDir: server
+    buildCommand: npm ci
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_VERSION
+        value: "24"
+      - key: CORS_ORIGIN
+        value: https://gitstudentsem.github.io
