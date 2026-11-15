@@ -1,4 +1,5 @@
 import { searchStore } from "../../../../stores/SearchStore";
+import { selectGenre } from "./tasks/selectGenre";
 
 export function usePresenter() {
   const { genre: selectedGenre, result } = searchStore;
@@ -8,12 +9,12 @@ export function usePresenter() {
     isVisible: genres.length > 0,
     totalCount,
     isAllSelected: selectedGenre === null,
-    selectAll: () => searchStore.selectGenre(null),
+    selectAll: () => selectGenre(null),
     genres: genres.map(({ name, count }) => ({
       name,
       count,
       isSelected: selectedGenre === name,
-      onSelect: () => searchStore.selectGenre(name),
+      onSelect: () => selectGenre(name),
     })),
   };
 }
