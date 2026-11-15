@@ -1,5 +1,5 @@
-import type { Show } from "../../../../../api/shows";
-import { ColorBars } from "../../ColorBars/ColorBars";
+import type { Show } from "../../../../../../api/shows";
+import { ColorBars } from "../../../ColorBars/ColorBars";
 import { usePresenter } from "./logic/usePresenter";
 import styles from "./Poster.module.css";
 

@@ -1,7 +1,7 @@
 import { useState } from "react";
-import type { Show } from "../../../../../../api/shows";
-import { favoritesStore } from "../../../../../../stores/FavoritesStore";
-import { toastStore } from "../../../../../../stores/ToastStore";
+import type { Show } from "../../../../../../../api/shows";
+import { favoritesStore } from "../../../../../../../stores/FavoritesStore";
+import { toastStore } from "../../../../../../../stores/ToastStore";
 import { toggleFavorite } from "./tasks/toggleFavorite";
 
 export function usePresenter(show: Show) {

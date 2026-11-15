@@ -7,8 +7,8 @@ export function usePresenter({ isOpen, onToggle }: FavoritesButtonProps) {
   return {
     icon: isOpen ? "←" : "✦",
     label: isOpen ? "К поиску" : "Избранное",
-    // Пока список грузится или не загрузился, число неизвестно.
     hasCount: !isOpen,
+    // Пока список грузится или не загрузился, число неизвестно.
     countText: status === "ready" ? String(count) : "…",
     isPressed: isOpen,
     handleClick: onToggle,

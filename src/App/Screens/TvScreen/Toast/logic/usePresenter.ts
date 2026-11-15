@@ -11,9 +11,10 @@ export function usePresenter() {
   const isError = toast?.kind === "favorite-error";
 
   // Таймер автоскрытия — реакция интерфейса, поэтому он здесь, а не в сторе (8.11).
+  // Новое уведомление меняет toastId, и cleanup снимает таймер прошлого.
   useEffect(() => {
     if (toastId === undefined) return;
-    const timer = setTimeout(() => toastStore.hide(toastId), TOAST_MS);
+    const timer = setTimeout(toastStore.hide, TOAST_MS);
     return () => clearTimeout(timer);
   }, [toastId]);
 
@@ -24,6 +25,6 @@ export function usePresenter() {
     label: isError ? "Сбой" : "Срочно",
     text: toast ? getToastText(toast) : "",
     isError,
-    close: () => toastId !== undefined && toastStore.hide(toastId),
+    close: toastStore.hide,
   };
 }

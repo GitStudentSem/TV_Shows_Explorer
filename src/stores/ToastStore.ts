@@ -26,9 +26,8 @@ export class ToastStore {
     this.current = { id: this.#lastId, kind, showName };
   }
 
-  /** Скрываем только своё уведомление: за время таймера могло прийти новое. */
-  hide(id: number) {
-    if (this.current?.id === id) this.current = null;
+  hide() {
+    this.current = null;
   }
 }
 

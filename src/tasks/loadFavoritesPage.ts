@@ -1,4 +1,4 @@
-import { ApiError, type ApiErrorCode, isAbortError } from "../api/client";
+import { type ApiErrorCode, isAbortError, toApiErrorCode } from "../api/client";
 import { fetchFavoritesPage } from "../api/favorites";
 import { favoritesPageStore } from "../stores/FavoritesPageStore";
 
@@ -19,7 +19,7 @@ export async function loadFavoritesPage(): Promise<LoadFavoritesPageResult> {
   } catch (error) {
     if (isAbortError(error)) return { error: null };
 
-    const code = error instanceof ApiError ? error.code : "network";
+    const code = toApiErrorCode(error);
     favoritesPageStore.showError(code);
     return { error: code };
   }

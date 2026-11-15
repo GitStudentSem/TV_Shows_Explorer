@@ -1,4 +1,4 @@
-import { ApiError, type ApiErrorCode } from "../../../../api/client";
+import { type ApiErrorCode, toApiErrorCode } from "../../../../api/client";
 import { fetchHealth } from "../../../../api/health";
 
 export interface WakeUpServerResult {
@@ -9,14 +9,11 @@ export interface WakeUpServerResult {
  * Разбудить сервер и дождаться, пока он ответит. После простоя хостинг
  * поднимает его заново, и первый ответ может идти до минуты.
  */
-export async function wakeUpServer(
-  signal: AbortSignal,
-): Promise<WakeUpServerResult> {
+export async function wakeUpServer(): Promise<WakeUpServerResult> {
   try {
-    await fetchHealth(signal);
+    await fetchHealth();
     return { error: null };
   } catch (error) {
-    if (signal.aborted) return { error: null };
-    return { error: error instanceof ApiError ? error.code : "network" };
+    return { error: toApiErrorCode(error) };
   }
 }

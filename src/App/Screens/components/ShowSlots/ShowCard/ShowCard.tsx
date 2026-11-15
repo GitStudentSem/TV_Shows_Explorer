@@ -1,5 +1,5 @@
-import type { Show } from "../../../../api/shows";
-import { Glyph } from "../Glyph/Glyph";
+import type { Show } from "../../../../../api/shows";
+import { Glyph } from "../../Glyph/Glyph";
 import { FavoriteStar } from "./FavoriteStar/FavoriteStar";
 import { usePresenter } from "./logic/usePresenter";
 import { Poster } from "./Poster/Poster";
