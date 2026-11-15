@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 import { searchStore } from "../../../stores/SearchStore";
 
-export const DEBOUNCE_MS = 370;
+const DEBOUNCE_MS = 370;
 
 /** Пауза во вводе перед поиском (8.9): в стор уходит уже «устоявшийся» запрос. */
 export function useTermDebounce() {

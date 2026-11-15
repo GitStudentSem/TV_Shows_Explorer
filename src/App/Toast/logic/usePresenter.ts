@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { toastStore } from "../../../stores/ToastStore";
 import { getToastText } from "./getToastText";
 
-export const TOAST_MS = 3000;
+const TOAST_MS = 3000;
 
 export function usePresenter() {
   const toast = toastStore.current;

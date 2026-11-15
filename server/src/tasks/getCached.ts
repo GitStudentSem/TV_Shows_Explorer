@@ -1,7 +1,7 @@
 import { readCache, writeCache } from "../storage/cache.ts";
 
 /** Одинаковый запрос к TVmaze в течение 5 минут отдаём из кеша. */
-export const CACHE_TTL_MS = 5 * 60 * 1000;
+const CACHE_TTL_MS = 5 * 60 * 1000;
 
 /**
  * Взять данные из кеша, а если их нет или они устарели, загрузить и обновить кеш.
