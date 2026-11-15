@@ -188,6 +188,24 @@ export async function goToPage(page: number): Promise<LoadShowsResult> {
 
 _Почему:_ причина и следствие лежат в одной функции. Её можно прочитать сверху вниз, дописать в неё шаг (лог, тост, откат), дождаться через `await` и протестировать без React. При реакции на стор связь «сменил страницу → загрузил» видна только тому, кто знает про эффект в другом конце дерева.
 
+**7.9. Optimistic UI и откат — в задаче.** Если реакция должна быть мгновенной, задача сначала меняет стор, потом вызывает `api/`, а при ошибке возвращает стор в прежнее состояние и отдаёт код ошибки. Что показать в ответ (тост, текст), решает Presenter по результату (7.5, 8.10).
+
+```ts
+async function removeFavorite(show: Show): Promise<ToggleFavoriteResult> {
+  const index = favoritesStore.indexOf(show.id);
+  favoritesStore.remove(show.id);
+  try {
+    await deleteFavorite(show.id);
+    return { error: null, isFavorite: false };
+  } catch (error) {
+    favoritesStore.insert(index, show); // откат на прежнее место
+    return { error: toErrorCode(error) };
+  }
+}
+```
+
+_Почему:_ изменение и его откат — две половины одного сценария, и они должны лежать рядом. Presenter не знает, что было в сторе до клика, а стор не знает, что изменение предварительное.
+
 ## 8. Применение в этом проекте
 
 Эти пункты не из конспекта: они уточняют правила под наш стек.
