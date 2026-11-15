@@ -1,4 +1,4 @@
-import { ApiError, type ApiErrorCode } from "../../../../api/client";
+import { type ApiErrorCode, toApiErrorCode } from "../../../../api/client";
 import { fetchFavoriteIds } from "../../../../api/favorites";
 import { favoritesStore } from "../../../../stores/FavoritesStore";
 
@@ -7,20 +7,14 @@ export interface LoadFavoriteIdsResult {
 }
 
 /** Узнать, что уже в избранном: звёздочки и счётчик нужны сразу после старта. */
-export async function loadFavoriteIds(
-  signal?: AbortSignal,
-): Promise<LoadFavoriteIdsResult> {
+export async function loadFavoriteIds(): Promise<LoadFavoriteIdsResult> {
   favoritesStore.startLoading();
   try {
-    const ids = await fetchFavoriteIds(signal);
-    if (signal?.aborted) return { error: null };
-
+    const ids = await fetchFavoriteIds();
     favoritesStore.setIds(ids);
     return { error: null };
   } catch (error) {
-    if (signal?.aborted) return { error: null };
-
-    const code = error instanceof ApiError ? error.code : "network";
+    const code = toApiErrorCode(error);
     favoritesStore.showError();
     return { error: code };
   }

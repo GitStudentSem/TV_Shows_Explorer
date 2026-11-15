@@ -19,6 +19,11 @@ export function isAbortError(error: unknown): boolean {
   return error instanceof DOMException && error.name === "AbortError";
 }
 
+/** Код любой ошибки запроса: ApiError несёт свой, остальное считаем сетевым сбоем. */
+export function toApiErrorCode(error: unknown): ApiErrorCode {
+  return error instanceof ApiError ? error.code : "network";
+}
+
 /**
  * Запрос к нашему API. Любой сбой приходит как ApiError с кодом,
  * кроме отмены: её AbortError пробрасываем как есть.

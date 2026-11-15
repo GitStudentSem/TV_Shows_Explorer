@@ -1,10 +1,13 @@
-import { ApiError, type ApiErrorCode } from "../../../../../../../api/client";
+import {
+  type ApiErrorCode,
+  toApiErrorCode,
+} from "../../../../../../../../api/client";
 import {
   deleteFavorite,
   putFavorite,
-} from "../../../../../../../api/favorites";
-import type { Show } from "../../../../../../../api/shows";
-import { favoritesStore } from "../../../../../../../stores/FavoritesStore";
+} from "../../../../../../../../api/favorites";
+import type { Show } from "../../../../../../../../api/shows";
+import { favoritesStore } from "../../../../../../../../stores/FavoritesStore";
 
 export type ToggleFavoriteResult =
   | { error: null; isFavorite: boolean }
@@ -25,7 +28,7 @@ async function addFavorite(show: Show): Promise<ToggleFavoriteResult> {
     return { error: null, isFavorite: true };
   } catch (error) {
     favoritesStore.remove(show.id);
-    return { error: toErrorCode(error) };
+    return { error: toApiErrorCode(error) };
   }
 }
 
@@ -36,10 +39,6 @@ async function removeFavorite(show: Show): Promise<ToggleFavoriteResult> {
     return { error: null, isFavorite: false };
   } catch (error) {
     favoritesStore.add(show.id);
-    return { error: toErrorCode(error) };
+    return { error: toApiErrorCode(error) };
   }
-}
-
-function toErrorCode(error: unknown): ApiErrorCode {
-  return error instanceof ApiError ? error.code : "network";
 }

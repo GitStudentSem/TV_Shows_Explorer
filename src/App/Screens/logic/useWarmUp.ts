@@ -14,17 +14,9 @@ export function useWarmUp(): boolean {
   const [isSwitchedOn, setIsSwitchedOn] = useState(false);
 
   useEffect(() => {
-    const controller = new AbortController();
     const timer = setTimeout(() => setIsSwitchedOn(true), SWITCH_ON_MS);
-
-    wakeUpServer(controller.signal).then(() => {
-      if (!controller.signal.aborted) setIsServerAwake(true);
-    });
-
-    return () => {
-      controller.abort();
-      clearTimeout(timer);
-    };
+    wakeUpServer().then(() => setIsServerAwake(true));
+    return () => clearTimeout(timer);
   }, []);
 
   return !isServerAwake || !isSwitchedOn;

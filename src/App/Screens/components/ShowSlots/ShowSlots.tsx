@@ -1,7 +1,7 @@
 import type { Show } from "../../../../api/shows";
-import { ShowCard } from "../ShowCard/ShowCard";
 import { usePresenter } from "./logic/usePresenter";
 import { Noise } from "./Noise/Noise";
+import { ShowCard } from "./ShowCard/ShowCard";
 import styles from "./ShowSlots.module.css";
 
 export interface ShowSlotsProps {

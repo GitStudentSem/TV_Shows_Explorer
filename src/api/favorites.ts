@@ -10,8 +10,8 @@ export interface FavoritesPage {
 }
 
 /** id всего избранного: по ним горят звёздочки и считается кнопка. */
-export function fetchFavoriteIds(signal?: AbortSignal): Promise<number[]> {
-  return request<number[]>("/api/favorites/ids", { signal });
+export function fetchFavoriteIds(): Promise<number[]> {
+  return request<number[]>("/api/favorites/ids");
 }
 
 /** Одновременно грузится одна страница: новый запрос отменяет предыдущий (8.9.1). */

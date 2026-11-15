@@ -1,4 +1,4 @@
-import { ApiError, type ApiErrorCode, isAbortError } from "../api/client";
+import { type ApiErrorCode, isAbortError, toApiErrorCode } from "../api/client";
 import { abortFetchShows, fetchShows } from "../api/shows";
 import { searchStore } from "../stores/SearchStore";
 
@@ -28,7 +28,7 @@ export async function loadShows(): Promise<LoadShowsResult> {
   } catch (error) {
     if (isAbortError(error)) return { error: null };
 
-    const code = error instanceof ApiError ? error.code : "network";
+    const code = toApiErrorCode(error);
     searchStore.showError(code);
     return { error: code };
   }
