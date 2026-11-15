@@ -1,18 +1,19 @@
-import { showsListStore } from "../../../../stores/ShowsListStore";
+import { searchStore } from "../../../../stores/SearchStore";
 
 export function usePresenter() {
-  const { genres, selectedGenre, totalCount } = showsListStore;
+  const { genre: selectedGenre, result } = searchStore;
+  const { genres, totalCount } = result;
 
   return {
     isVisible: genres.length > 0,
     totalCount,
     isAllSelected: selectedGenre === null,
-    selectAll: () => showsListStore.selectGenre(null),
+    selectAll: () => searchStore.selectGenre(null),
     genres: genres.map(({ name, count }) => ({
       name,
       count,
       isSelected: selectedGenre === name,
-      onSelect: () => showsListStore.selectGenre(name),
+      onSelect: () => searchStore.selectGenre(name),
     })),
   };
 }

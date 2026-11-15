@@ -1,17 +1,18 @@
 import { searchStore } from "../../../stores/SearchStore";
-import { showsListStore } from "../../../stores/ShowsListStore";
 
 export function usePresenter() {
-  const { status, shows } = searchStore;
-  const { filteredShows, visibleShows } = showsListStore;
-  const hasShows = shows.length > 0;
+  const { isSearching, status, result, searchedTerm } = searchStore;
+  // Пока меняются жанр или страница, показываем прошлую выдачу, а не скелетон.
+  const isError = !isSearching && status === "error";
+  const hasSearched = !isSearching && !isError && searchedTerm !== "";
+  const hasShows = result.totalCount > 0;
 
   return {
-    isLoading: status === "loading",
-    isError: status === "error",
-    isEmpty: status === "success" && !hasShows,
-    isSuccess: status === "success" && hasShows,
-    foundCount: filteredShows.length,
-    visibleShows,
+    isLoading: isSearching,
+    isError,
+    isEmpty: hasSearched && !hasShows,
+    isSuccess: hasSearched && hasShows,
+    foundCount: result.filteredCount,
+    visibleShows: result.shows,
   };
 }

@@ -1,9 +1,10 @@
-import { PAGE_SIZE } from "../../../../stores/ShowsListStore";
+/** Столько же карточек, сколько сервер отдаёт на страницу. */
+const SKELETON_COUNT = 3;
 
 export function usePresenter() {
   return {
     skeletonKeys: Array.from(
-      { length: PAGE_SIZE },
+      { length: SKELETON_COUNT },
       (_, index) => `skeleton-${index}`,
     ),
   };

@@ -1,102 +1,109 @@
-import { makeAutoObservable, runInAction } from "mobx";
-import { type Show, searchShows } from "../api/tvmaze";
-import { getErrorMessage } from "./getErrorMessage";
-
-export const DEBOUNCE_MS = 370;
+import { computedStruct, makeAutoObservable, observableRef } from "mobx";
+import type { ApiErrorCode } from "../api/client";
+import type { ShowsPage, ShowsQuery } from "../api/shows";
 
 export type SearchStatus = "idle" | "loading" | "success" | "error";
 
-/** Поиск сериалов: строка запроса, debounce, отмена устаревших запросов. */
-export class SearchStore {
-  query = "";
-  status: SearchStatus = "idle";
-  /** Последняя успешная выдача. Пока идёт загрузка нового запроса, не стирается. */
-  shows: Show[] = [];
-  errorMessage: string | null = null;
-  /** Запрос, по которому получена выдача `shows` (query может уже уйти вперёд). */
-  searchedTerm = "";
+/** Параметры запроса. `attempt` меняется на «Повторить», чтобы тот же запрос ушёл ещё раз. */
+export interface ShowsRequest extends ShowsQuery {
+  attempt: number;
+}
 
-  #debounceTimer: ReturnType<typeof setTimeout> | undefined;
-  #controller: AbortController | null = null;
-  /** Запрос, к которому мы идём: ждём debounce, грузим или уже показываем. */
-  #targetTerm: string | null = "";
+const EMPTY_PAGE: ShowsPage = {
+  shows: [],
+  genres: [],
+  totalCount: 0,
+  filteredCount: 0,
+  page: 1,
+  pageCount: 1,
+};
+
+/** Поиск сериалов: параметры запроса и последняя полученная страница. */
+export class SearchStore {
+  /** Текст в поле ввода, меняется на каждый символ. */
+  query = "";
+  /** Запрос после debounce: по нему уходит запрос на сервер. */
+  term = "";
+  genre: string | null = null;
+  page = 1;
+  attempt = 0;
+
+  status: SearchStatus = "idle";
+  /** Последняя успешная страница. Пока грузится новая, не стирается. */
+  result: ShowsPage = EMPTY_PAGE;
+  /** Запрос, по которому получен `result`. */
+  searchedTerm = "";
+  error: ApiErrorCode | null = null;
 
   constructor() {
-    makeAutoObservable(this, {}, { autoBind: true });
+    makeAutoObservable(
+      this,
+      { request: computedStruct, result: observableRef },
+      { autoBind: true },
+    );
+  }
+
+  get request(): ShowsRequest {
+    const { term, genre, page, attempt } = this;
+    return { term, genre, page, attempt };
+  }
+
+  /** Ищем новый запрос: ждём debounce или ответ по другому `term`. Смена жанра и страницы сюда не входит. */
+  get isSearching(): boolean {
+    const typed = this.query.trim();
+    if (!typed) return false;
+    const isWaitingDebounce = typed !== this.term;
+    const isLoadingNewTerm =
+      this.status === "loading" && this.term !== this.searchedTerm;
+    return isWaitingDebounce || isLoadingNewTerm;
   }
 
   setQuery(value: string) {
     this.query = value;
+  }
 
-    const term = value.trim();
-    if (term === this.#targetTerm) return;
+  /** Новый запрос — жанр и страница от прошлой выдачи больше не имеют смысла. */
+  setTerm(term: string) {
+    if (term === this.term) return;
+    this.term = term;
+    this.genre = null;
+    this.page = 1;
+  }
 
-    // Введён другой запрос: ожидание и ответ на предыдущий уже не нужны.
-    this.#cancelPending();
-    this.#targetTerm = term;
+  selectGenre(genre: string | null) {
+    this.genre = this.genre === genre ? null : genre;
+    this.page = 1;
+  }
 
-    if (!term) return this.#showResults("", [], "idle");
-    // Вернулись к показанному запросу до debounce: его выдача по-прежнему
-    // актуальна, а вместе с ней сохраняются выбранный жанр и страница.
-    if (term === this.searchedTerm) return this.#showResults(term, this.shows);
+  setPage(page: number) {
+    this.page = Math.min(Math.max(page, 1), this.result.pageCount);
+  }
 
-    // Показываем загрузку сразу, а не после debounce: иначе на быстром
-    // интернете скелетон лишь мелькает на время запроса.
+  retry() {
+    this.attempt += 1;
+  }
+
+  startLoading() {
     this.status = "loading";
-    this.errorMessage = null;
-    this.#debounceTimer = setTimeout(() => this.#search(term), DEBOUNCE_MS);
+    this.error = null;
   }
 
-  /** Enter и кнопка «Повторить»: запускают поиск сразу, не дожидаясь debounce. */
-  submit() {
-    const term = this.query.trim();
-    const isWaitingDebounce = this.#debounceTimer !== undefined;
-    if (term && (isWaitingDebounce || this.status === "error")) {
-      this.#search(term);
-    }
+  showResult(term: string, result: ShowsPage) {
+    this.status = "success";
+    this.result = result;
+    this.searchedTerm = term;
   }
 
-  #cancelPending() {
-    clearTimeout(this.#debounceTimer);
-    this.#debounceTimer = undefined;
-    this.#controller?.abort();
-    this.#controller = null;
+  showError(error: ApiErrorCode) {
+    this.status = "error";
+    this.error = error;
   }
 
-  #showResults(term: string, shows: Show[], status: SearchStatus = "success") {
-    runInAction(() => {
-      this.status = status;
-      this.shows = shows;
-      this.searchedTerm = term;
-      this.errorMessage = null;
-    });
-  }
-
-  async #search(term: string) {
-    this.#cancelPending();
-    const controller = new AbortController();
-    this.#controller = controller;
-    this.#targetTerm = term;
-    runInAction(() => {
-      this.status = "loading";
-      this.errorMessage = null;
-    });
-
-    try {
-      const shows = await searchShows(term, controller.signal);
-      if (controller.signal.aborted) return;
-
-      this.#showResults(term, shows);
-    } catch (error) {
-      if (controller.signal.aborted) return;
-
-      // Сбрасываем, чтобы тот же запрос можно было отправить повторно.
-      this.#targetTerm = null;
-      runInAction(() => {
-        this.errorMessage = getErrorMessage(error);
-        this.status = "error";
-      });
-    }
+  reset() {
+    this.status = "idle";
+    this.result = EMPTY_PAGE;
+    this.searchedTerm = "";
+    this.error = null;
   }
 }
 
