@@ -1,21 +1,47 @@
-import { TvScreen } from "../components/TvScreen/TvScreen";
-import { Pagination } from "./Pagination/Pagination";
-import { Results } from "./Results/Results";
-import { SearchBar } from "./SearchBar/SearchBar";
+import { observer } from "mobx-react-lite";
+import { Loading } from "../components/Loading/Loading";
+import { NoSignal } from "../components/NoSignal/NoSignal";
+import { ShowSlots } from "../components/ShowSlots/ShowSlots";
+import { EmptyMessage } from "./EmptyMessage/EmptyMessage";
+import { usePresenter } from "./logic/usePresenter";
+import styles from "./SearchScreen.module.css";
+import { WarmUpScreen } from "./WarmUpScreen/WarmUpScreen";
 
 export interface SearchScreenProps {
+  /** Телевизор ещё включается: вместо выдачи показываем кинескоп. */
   isWarmingUp: boolean;
 }
 
-/** Канал поиска: строка поиска и выдача на экране, страницы — под ним. */
-export function SearchScreen({ isWarmingUp }: SearchScreenProps) {
+/** Канал поиска на экране: выдача, загрузка, ошибка или «ничего не найдено». */
+export const SearchScreen = observer(function SearchScreen(
+  props: SearchScreenProps,
+) {
+  const {
+    isWarmingUp,
+    isLoading,
+    isError,
+    error,
+    retry,
+    isEmpty,
+    isSuccess,
+    foundCount,
+    visibleShows,
+  } = usePresenter(props);
+
   return (
-    <>
-      <TvScreen>
-        <SearchBar />
-        <Results isWarmingUp={isWarmingUp} />
-      </TvScreen>
-      <Pagination />
-    </>
+    <div className={styles.results}>
+      {isWarmingUp && <WarmUpScreen />}
+      {isLoading && <Loading />}
+      {isError && <NoSignal error={error} onRetry={retry} />}
+      {isEmpty && <EmptyMessage />}
+      {isSuccess && (
+        <>
+          <p className={styles.count} role="status">
+            Найдено: {foundCount}
+          </p>
+          <ShowSlots shows={visibleShows} />
+        </>
+      )}
+    </div>
   );
-}
+});

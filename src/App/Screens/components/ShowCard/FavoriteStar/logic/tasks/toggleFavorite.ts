@@ -19,7 +19,7 @@ export function toggleFavorite(show: Show): Promise<ToggleFavoriteResult> {
 }
 
 async function addFavorite(show: Show): Promise<ToggleFavoriteResult> {
-  favoritesStore.add(show);
+  favoritesStore.add(show.id);
   try {
     await putFavorite(show.id);
     return { error: null, isFavorite: true };
@@ -30,13 +30,12 @@ async function addFavorite(show: Show): Promise<ToggleFavoriteResult> {
 }
 
 async function removeFavorite(show: Show): Promise<ToggleFavoriteResult> {
-  const index = favoritesStore.indexOf(show.id);
   favoritesStore.remove(show.id);
   try {
     await deleteFavorite(show.id);
     return { error: null, isFavorite: false };
   } catch (error) {
-    favoritesStore.insert(index, show);
+    favoritesStore.add(show.id);
     return { error: toErrorCode(error) };
   }
 }

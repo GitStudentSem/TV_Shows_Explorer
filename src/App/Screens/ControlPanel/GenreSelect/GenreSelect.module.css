@@ -1,0 +1,45 @@
+.field {
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  gap: 8px;
+  width: 220px;
+}
+
+.label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--yellow);
+}
+
+/* Same height and look as the search input next to it. */
+.select {
+  min-height: 52px;
+  padding: 10px 36px 10px 14px;
+  border: 3px solid var(--cream);
+  border-radius: 6px;
+  font: 500 1rem var(--font-body);
+  color: var(--cream);
+  background:
+    linear-gradient(45deg, transparent 50%, var(--cream) 50%) right 20px center
+    / 6px 6px no-repeat,
+    linear-gradient(-45deg, transparent 50%, var(--cream) 50%) right 14px center
+    / 6px 6px no-repeat,
+    var(--panel);
+  appearance: none;
+  cursor: pointer;
+}
+
+.select:disabled {
+  border-color: var(--panel-line);
+  color: var(--muted);
+  cursor: not-allowed;
+}
+
+@media (max-width: 560px) {
+  .field {
+    width: auto;
+  }
+}

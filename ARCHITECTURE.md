@@ -176,7 +176,7 @@ _Почему:_ задача зависит от смысла («найти се
 **7.8. Сменил параметр — вызови загрузку.** Задача, которая меняет данные для запроса, сама вызывает задачу загрузки: `goToPage` ставит страницу и вызывает `loadShows`, `selectGenre` ставит жанр и вызывает `loadShows`. Реакции на изменение стора (`useEffect` по полю, `reaction`, `autorun`) для запуска сценариев не используем.
 
 ```ts
-// Pagination/logic/tasks/goToPage.ts
+// Footer/SearchPagination/logic/tasks/goToPage.ts
 export async function goToPage(page: number): Promise<LoadShowsResult> {
   const nextPage = Math.min(Math.max(page, 1), searchStore.result.pageCount);
   if (nextPage === searchStore.page) return { error: null };
@@ -192,13 +192,12 @@ _Почему:_ причина и следствие лежат в одной ф
 
 ```ts
 async function removeFavorite(show: Show): Promise<ToggleFavoriteResult> {
-  const index = favoritesStore.indexOf(show.id);
   favoritesStore.remove(show.id);
   try {
     await deleteFavorite(show.id);
     return { error: null, isFavorite: false };
   } catch (error) {
-    favoritesStore.insert(index, show); // откат на прежнее место
+    favoritesStore.add(show.id); // откат
     return { error: toErrorCode(error) };
   }
 }
@@ -249,7 +248,7 @@ _Почему:_ у отмены должен быть один владелец,
 
 **8.11. Уведомление в сторе — это данные, а не текст.** Toast показывают разные компоненты, поэтому его состояние лежит в сторе: `toastStore.show("favorite-added", showName)`. Текст собирает Presenter компонента `Toast`, и таймер автоскрытия тоже живёт там. Правило то же, что для ошибок (8.10) и таймеров (8.2).
 
-**8.12. Корневой `App` — каркас, а не начинка.** В нём только компонент верхнего уровня `Screens`: корпус телевизора и переключение каналов. Даже `Toast` живёт ниже, на кинескопе (`Screens/components/TvScreen/Toast`), потому что визуально это часть экрана. Загрузчики, навигация, прогрев и разметка экрана живут ниже, у тех компонентов, которым они нужны. Своего Presenter'а у `App` нет (8.5).
+**8.12. Корневой `App` — каркас, а не начинка.** В нём только компонент верхнего уровня `Screens`: корпус телевизора и переключение каналов. Даже `Toast` живёт ниже, на кинескопе (`Screens/TvScreen/Toast`), потому что визуально это часть экрана. Кинескоп один на все каналы: каналы меняют только его содержимое, поэтому бегущая строка не перезапускается при переключении. Загрузчики, навигация, прогрев и разметка экрана живут ниже, у тех компонентов, которым они нужны. Своего Presenter'а у `App` нет (8.5).
 
 _Почему:_ корень читается как оглавление приложения (1.3). Когда в нём смешаны шапка, загрузка данных и переключение экранов, любое изменение одной части задевает остальные.
 

@@ -1,14 +1,19 @@
 import { type Request, type Response, Router } from "express";
 import { addFavorite } from "../tasks/addFavorite.ts";
-import { getFavorites } from "../tasks/getFavorites.ts";
+import { getFavoriteIds } from "../tasks/getFavoriteIds.ts";
+import { getFavoritesPage } from "../tasks/getFavoritesPage.ts";
 import { removeFavorite } from "../tasks/removeFavorite.ts";
 import { ERROR_STATUS } from "./errorStatus.ts";
 
-/** GET /api/favorites, PUT и DELETE /api/favorites/:id. */
+/** GET /api/favorites?page=, GET /api/favorites/ids, PUT и DELETE /api/favorites/:id. */
 export const favoritesRouter = Router();
 
-favoritesRouter.get("/", (_req, res) => {
-  res.json(getFavorites());
+favoritesRouter.get("/", (req, res) => {
+  res.json(getFavoritesPage(Number(req.query.page) || 1));
+});
+
+favoritesRouter.get("/ids", (_req, res) => {
+  res.json(getFavoriteIds());
 });
 
 favoritesRouter.put("/:id", async (req, res) => {

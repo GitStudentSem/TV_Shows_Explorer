@@ -1,20 +1,27 @@
+import { useEffect } from "react";
+import { favoritesPageStore } from "../../../../stores/FavoritesPageStore";
 import { favoritesStore } from "../../../../stores/FavoritesStore";
-import { loadFavorites } from "../../../../tasks/loadFavorites";
-import { useStickyShows } from "./useStickyShows";
+import { loadFavoritesPage } from "../../../../tasks/loadFavoritesPage";
+import { openFavorites } from "./tasks/openFavorites";
 
 export function usePresenter() {
-  const { items, status, count } = favoritesStore;
-  const shows = useStickyShows(items);
+  // Канал включили — показываем его первую страницу.
+  useEffect(() => {
+    openFavorites();
+  }, []);
+
+  const { status, result, error } = favoritesPageStore;
   const isReady = status === "ready";
 
   return {
     isLoading: status === "loading",
     isError: status === "error",
-    isEmpty: isReady && shows.length === 0,
-    hasShows: isReady && shows.length > 0,
+    error,
+    isEmpty: isReady && result.shows.length === 0,
+    hasShows: isReady && result.shows.length > 0,
     // Счётчик — настоящий: снятые, но ещё видимые сериалы в него не входят.
-    countText: `Сериалов: ${count}`,
-    shows,
-    retry: () => loadFavorites(),
+    countText: `Сериалов: ${favoritesStore.count}`,
+    shows: result.shows,
+    retry: () => loadFavoritesPage(),
   };
 }

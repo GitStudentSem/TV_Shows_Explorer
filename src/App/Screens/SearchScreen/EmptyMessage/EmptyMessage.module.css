@@ -1,0 +1,17 @@
+.message {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  min-height: 240px;
+  padding: 16px;
+  border-radius: 10px;
+}
+
+.testCard {
+  font-size: 0.625rem;
+  color: var(--screen);
+  user-select: none;
+}

@@ -1,0 +1,13 @@
+/* Same layout as a loaded page: the status line, then the slots. */
+.loading {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.note {
+  height: var(--status-height);
+  font-size: 0.8rem;
+  line-height: var(--status-height);
+  color: var(--muted);
+}
