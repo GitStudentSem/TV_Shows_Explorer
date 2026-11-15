@@ -1,10 +1,8 @@
 import { useState } from "react";
 import { useFavoritesLoader } from "./useFavoritesLoader";
-import { useShowsLoader } from "./useShowsLoader";
 import { useWarmUp } from "./useWarmUp";
 
 export function usePresenter() {
-  useShowsLoader();
   useFavoritesLoader();
   const isWarmingUp = useWarmUp();
 

@@ -143,13 +143,14 @@ src/
 │   ├── FavoritesStore.ts        копия избранного с сервера
 │   └── ToastStore.ts            текущее уведомление (данные, не текст)
 ├── tasks/
-│   └── loadFavorites.ts         нужна App (при старте) и списку (Повторить)
+│   ├── loadFavorites.ts         нужна App (при старте) и списку (Повторить)
+│   └── loadShows.ts             загрузить выдачу по параметрам из стора
 └── App/                         корневой компонент экрана
     ├── logic/
     │   ├── usePresenter.ts      какой «канал» на экране: поиск или избранное
-    │   ├── useShowsLoader.ts    владелец AbortController, запускает поиск
     │   ├── useFavoritesLoader.ts грузит избранное при старте
-    │   └── tasks/searchShows.ts задача: запросить страницу и положить в стор
+    │   ├── useWarmUp.ts         кинескоп при старте, пока сервер просыпается
+    │   └── tasks/wakeUpServer.ts задача: дождаться ответа сервера
     ├── FavoritesButton/         «★ Избранное» со счётчиком
     ├── FavoritesPanel/          список избранного вместо выдачи
     ├── Toast/                   уведомление (logic/getToastText.ts, таймер)
@@ -159,13 +160,13 @@ src/
     │   │   └── Poster/          постер или заглушка «Нет постера»
     │   ├── ColorBars/           декоративные полосы
     │   └── MessagePanel/        рамка для сообщений
-    ├── SearchBar/               строка поиска (logic/useTermDebounce.ts — debounce)
+    ├── SearchBar/               строка поиска (debounce, logic/tasks/searchByTerm.ts)
     ├── Results/                 область выдачи
     │   ├── Loading/             состояние «загрузка»
     │   ├── ErrorMessage/        «ошибка» + «Повторить» (logic/getErrorText.ts)
     │   ├── EmptyMessage/        состояние «ничего не найдено»
-    │   └── GenreChips/          фильтр по жанрам
-    └── Pagination/              переключатель страниц
+    │   └── GenreChips/          фильтр по жанрам (logic/tasks/selectGenre.ts)
+    └── Pagination/              переключатель страниц (logic/tasks/goToPage.ts и др.)
 
 server/src/
 ├── index.ts, app.ts             запуск и сборка Express-приложения
@@ -184,13 +185,15 @@ server/src/
 Клиент:
 
 - [`useTermDebounce`](src/App/SearchBar/logic/useTermDebounce.ts) ждёт 370 мс
-  после последнего символа и записывает запрос в стор; Enter — сразу;
-- жанр и страница меняются синхронными методами
-  [`SearchStore`](src/stores/SearchStore.ts);
-- [`useShowsLoader`](src/App/logic/useShowsLoader.ts) реагирует на любую смену
-  параметров: отменяет прошлый запрос и вызывает задачу
-  [`searchShows`](src/App/logic/tasks/searchShows.ts). Один владелец отмены на
-  три источника запросов — правило 8.9.1;
+  после последнего символа и вызывает задачу
+  [`searchByTerm`](src/App/SearchBar/logic/tasks/searchByTerm.ts); Enter — сразу;
+- жанр и страницу меняют задачи
+  [`selectGenre`](src/App/Results/GenreChips/logic/tasks/selectGenre.ts) и
+  [`goToPage`](src/App/Pagination/logic/tasks/goToPage.ts). Каждая из трёх
+  задач обновляет параметры в [`SearchStore`](src/stores/SearchStore.ts) и
+  явно вызывает [`loadShows`](src/tasks/loadShows.ts) — правило 7.8;
+- [`fetchShows`](src/api/shows.ts) отменяет предыдущий запрос поиска сам: один
+  владелец отмены на три источника запросов — правило 8.9.1;
 - пока меняются жанр или страница, на экране остаётся прошлая выдача, скелетон
   показывается только для нового запроса.
 
@@ -216,9 +219,11 @@ server/src/
 | 4.4 Задача лежит у своего компонента      | [`toggleFavorite`](src/App/components/ShowCard/FavoriteStar/logic/tasks/toggleFavorite.ts) у звёздочки, [`loadFavorites`](src/tasks/loadFavorites.ts) — глобальная: её зовут двое |
 | 7.5 Локальное состояние в Presenter       | [`FavoriteStar/logic/usePresenter.ts`](src/App/components/ShowCard/FavoriteStar/logic/usePresenter.ts) — `isPending` клика, toast по результату задачи                            |
 | 8.11 Уведомление — данные                 | [`ToastStore`](src/stores/ToastStore.ts) хранит `kind`, текст — [`getToastText`](src/App/Toast/logic/getToastText.ts)                                                             |
-| 7.1–7.5 Задача — обычная функция          | [`App/logic/tasks/searchShows.ts`](src/App/logic/tasks/searchShows.ts) — ввод, шаги, результат с кодом ошибки                                                                     |
+| 7.1–7.5 Задача — обычная функция          | [`tasks/loadShows.ts`](src/tasks/loadShows.ts) — ввод, шаги, результат с кодом ошибки                                                                                             |
+| 7.8 Сменил параметр — вызови загрузку     | [`goToPage`](src/App/Pagination/logic/tasks/goToPage.ts) — ставит страницу и вызывает `loadShows`, реактивного загрузчика нет                                                     |
 | 8.1 View не обращается к стору            | Ни один `.tsx` не импортирует `stores/`: `grep -rl stores src/App --include='*.tsx'` пуст                                                                                         |
-| 8.9 Debounce и отмена — в Presenter       | Стор без таймеров и контроллеров: [`SearchStore.ts`](src/stores/SearchStore.ts)                                                                                                   |
+| 8.2 Стор — только данные                  | [`SearchStore.ts`](src/stores/SearchStore.ts) — поля, геттеры и сеттеры без условий                                                                                               |
+| 8.9 Debounce в Presenter, отмена в `api/` | [`useTermDebounce`](src/App/SearchBar/logic/useTermDebounce.ts), [`api/shows.ts`](src/api/shows.ts)                                                                               |
 | 9.4 Слои сервера                          | [`routes/favorites.ts`](server/src/routes/favorites.ts) → [`tasks/addFavorite.ts`](server/src/tasks/addFavorite.ts) → [`storage/favorite.ts`](server/src/storage/favorite.ts)     |
 
 ## Редактор

@@ -1,9 +1,10 @@
 import { useEffect, useRef } from "react";
 import { searchStore } from "../../../stores/SearchStore";
+import { searchByTerm } from "./tasks/searchByTerm";
 
 const DEBOUNCE_MS = 370;
 
-/** Пауза во вводе перед поиском (8.9): в стор уходит уже «устоявшийся» запрос. */
+/** Пауза во вводе перед поиском (8.9): задача получает уже «устоявшийся» запрос. */
 export function useTermDebounce() {
   const timer = useRef<ReturnType<typeof setTimeout>>(undefined);
 
@@ -18,22 +19,16 @@ export function useTermDebounce() {
     /** Ввод: пустой запрос применяем сразу, остальные — после паузы. */
     schedule(term: string) {
       cancel();
-      // Вернулись к текущему запросу до конца паузы — искать нечего.
-      if (term === searchStore.term) return;
-      if (!term) return searchStore.setTerm("");
+      if (!term) return searchByTerm("");
       timer.current = setTimeout(() => {
         timer.current = undefined;
-        searchStore.setTerm(term);
+        searchByTerm(term);
       }, DEBOUNCE_MS);
     },
-    /** Enter: ищем сразу. Если тот же запрос упал с ошибкой, повторяем его. */
+    /** Enter: ищем сразу, не дожидаясь паузы. */
     flush() {
       cancel();
-      const term = searchStore.query.trim();
-      const isFailed =
-        term === searchStore.term && searchStore.status === "error";
-      if (isFailed) return searchStore.retry();
-      searchStore.setTerm(term);
+      searchByTerm(searchStore.query.trim());
     },
   };
 }

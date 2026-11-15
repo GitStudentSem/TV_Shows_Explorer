@@ -1,13 +1,8 @@
-import { computedStruct, makeAutoObservable, observableRef } from "mobx";
+import { makeAutoObservable, observableRef } from "mobx";
 import type { ApiErrorCode } from "../api/client";
-import type { ShowsPage, ShowsQuery } from "../api/shows";
+import type { ShowsPage } from "../api/shows";
 
 export type SearchStatus = "idle" | "loading" | "success" | "error";
-
-/** Параметры запроса. `attempt` меняется на «Повторить», чтобы тот же запрос ушёл ещё раз. */
-export interface ShowsRequest extends ShowsQuery {
-  attempt: number;
-}
 
 const EMPTY_PAGE: ShowsPage = {
   shows: [],
@@ -18,7 +13,10 @@ const EMPTY_PAGE: ShowsPage = {
   pageCount: 1,
 };
 
-/** Поиск сериалов: параметры запроса и последняя полученная страница. */
+/**
+ * Поиск сериалов: параметры запроса и последняя полученная страница.
+ * Только данные и простые сеттеры (8.2): что сбросить и когда грузить, решают задачи.
+ */
 export class SearchStore {
   /** Текст в поле ввода, меняется на каждый символ. */
   query = "";
@@ -26,7 +24,6 @@ export class SearchStore {
   term = "";
   genre: string | null = null;
   page = 1;
-  attempt = 0;
 
   status: SearchStatus = "idle";
   /** Последняя успешная страница. Пока грузится новая, не стирается. */
@@ -36,16 +33,7 @@ export class SearchStore {
   error: ApiErrorCode | null = null;
 
   constructor() {
-    makeAutoObservable(
-      this,
-      { request: computedStruct, result: observableRef },
-      { autoBind: true },
-    );
-  }
-
-  get request(): ShowsRequest {
-    const { term, genre, page, attempt } = this;
-    return { term, genre, page, attempt };
+    makeAutoObservable(this, { result: observableRef }, { autoBind: true });
   }
 
   /** Ищем новый запрос: ждём debounce или ответ по другому `term`. Смена жанра и страницы сюда не входит. */
@@ -62,25 +50,16 @@ export class SearchStore {
     this.query = value;
   }
 
-  /** Новый запрос — жанр и страница от прошлой выдачи больше не имеют смысла. */
   setTerm(term: string) {
-    if (term === this.term) return;
     this.term = term;
-    this.genre = null;
-    this.page = 1;
   }
 
-  selectGenre(genre: string | null) {
-    this.genre = this.genre === genre ? null : genre;
-    this.page = 1;
+  setGenre(genre: string | null) {
+    this.genre = genre;
   }
 
   setPage(page: number) {
-    this.page = Math.min(Math.max(page, 1), this.result.pageCount);
-  }
-
-  retry() {
-    this.attempt += 1;
+    this.page = page;
   }
 
   startLoading() {

@@ -37,11 +37,30 @@ export interface ShowsQuery {
   page: number;
 }
 
-export function fetchShows(
-  { term, genre, page }: ShowsQuery,
-  signal: AbortSignal,
-): Promise<ShowsPage> {
+/** Одновременно идёт один поиск: новый запрос отменяет предыдущий (8.9.1). */
+let searchController: AbortController | null = null;
+
+export async function fetchShows({
+  term,
+  genre,
+  page,
+}: ShowsQuery): Promise<ShowsPage> {
+  abortFetchShows();
+  const controller = new AbortController();
+  searchController = controller;
+
   const params = new URLSearchParams({ q: term, page: String(page) });
   if (genre) params.set("genre", genre);
-  return request<ShowsPage>(`/api/shows?${params}`, { signal });
+  const result = await request<ShowsPage>(`/api/shows?${params}`, {
+    signal: controller.signal,
+  });
+  // Ответ мог успеть прийти, но после него уже ушёл новый запрос.
+  controller.signal.throwIfAborted();
+  return result;
+}
+
+/** Отменить текущий поиск, не начиная новый: например, когда поле очистили. */
+export function abortFetchShows() {
+  searchController?.abort();
+  searchController = null;
 }

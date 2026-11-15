@@ -14,6 +14,11 @@ export class ApiError extends Error {
   }
 }
 
+/** Запрос отменили: это не ошибка, задача молча выходит (8.10). */
+export function isAbortError(error: unknown): boolean {
+  return error instanceof DOMException && error.name === "AbortError";
+}
+
 /**
  * Запрос к нашему API. Любой сбой приходит как ApiError с кодом,
  * кроме отмены: её AbortError пробрасываем как есть.

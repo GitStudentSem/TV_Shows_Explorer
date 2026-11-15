@@ -1,4 +1,7 @@
 import { searchStore } from "../../../stores/SearchStore";
+import { goToNextPage } from "./tasks/goToNextPage";
+import { goToPage } from "./tasks/goToPage";
+import { goToPrevPage } from "./tasks/goToPrevPage";
 
 export function usePresenter() {
   const { page, result, isSearching, status } = searchStore;
@@ -9,8 +12,8 @@ export function usePresenter() {
     isVisible: !isSearching && status !== "error" && pageCount > 1,
     isFirstPage: page === 1,
     isLastPage: page === pageCount,
-    goPrev: () => searchStore.setPage(page - 1),
-    goNext: () => searchStore.setPage(page + 1),
+    goPrev: goToPrevPage,
+    goNext: goToNextPage,
     pages: usePages(),
   };
 }
@@ -25,7 +28,7 @@ function usePages() {
       label: String(number).padStart(2, "0"),
       ariaLabel: `Страница ${number}`,
       ariaCurrent: number === page ? ("page" as const) : undefined,
-      onClick: () => searchStore.setPage(number),
+      onClick: () => goToPage(number),
     };
   });
 }
