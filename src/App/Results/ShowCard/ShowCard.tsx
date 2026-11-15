@@ -1,7 +1,7 @@
 import type { Show } from "../../../api/tvmaze";
 import { ColorBars } from "../components/ColorBars/ColorBars";
+import { usePresenter } from "./logic/usePresenter";
 import styles from "./ShowCard.module.css";
-import { usePresenter } from "./usePresenter";
 
 export interface ShowCardProps {
   show: Show;

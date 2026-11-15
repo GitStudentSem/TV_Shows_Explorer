@@ -1,5 +1,5 @@
 import styles from "./Loading.module.css";
-import { usePresenter } from "./usePresenter";
+import { usePresenter } from "./logic/usePresenter";
 
 export function Loading() {
   const { skeletonKeys } = usePresenter();

@@ -1,5 +1,5 @@
 import type { ComponentProps } from "react";
-import { usePresenter } from "./usePresenter";
+import { usePresenter } from "./logic/usePresenter";
 
 export interface ColorBarsProps extends ComponentProps<"div"> {}
 

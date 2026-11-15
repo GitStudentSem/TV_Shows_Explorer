@@ -1,4 +1,4 @@
-import { searchStore } from "../../../stores/SearchStore";
+import { searchStore } from "../../../../stores/SearchStore";
 
 export function usePresenter() {
   return {

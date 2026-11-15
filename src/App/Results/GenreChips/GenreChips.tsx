@@ -1,6 +1,6 @@
 import { observer } from "mobx-react-lite";
 import styles from "./GenreChips.module.css";
-import { usePresenter } from "./usePresenter";
+import { usePresenter } from "./logic/usePresenter";
 
 export const GenreChips = observer(function GenreChips() {
   const { genres, isVisible, totalCount, isAllSelected, selectAll } =

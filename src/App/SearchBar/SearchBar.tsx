@@ -1,6 +1,6 @@
 import { observer } from "mobx-react-lite";
+import { usePresenter } from "./logic/usePresenter";
 import styles from "./SearchBar.module.css";
-import { usePresenter } from "./usePresenter";
 
 export const SearchBar = observer(function SearchBar() {
   const { query, handleChange, handleSubmit } = usePresenter();
