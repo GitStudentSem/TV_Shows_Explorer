@@ -1,3 +1,10 @@
+/* Fonts are bundled with the app, not loaded from a CDN. Each file covers
+   all subsets via unicode-range, so the browser fetches only what it renders. */
+@import "@fontsource/ibm-plex-mono/400.css";
+@import "@fontsource/ibm-plex-mono/500.css";
+@import "@fontsource/ibm-plex-mono/600.css";
+@import "@fontsource/rubik-mono-one/400.css";
+
 :root {
   --wood: #6b3f22;
   --wood-dark: #4a2a15;
