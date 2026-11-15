@@ -1,5 +1,6 @@
 import cors from "cors";
 import express from "express";
+import { favoritesRouter } from "./routes/favorites.ts";
 import { healthRouter } from "./routes/health.ts";
 import { showsRouter } from "./routes/shows.ts";
 
@@ -13,6 +14,7 @@ export function createApp() {
 
   app.use("/api/health", healthRouter);
   app.use("/api/shows", showsRouter);
+  app.use("/api/favorites", favoritesRouter);
 
   return app;
 }
