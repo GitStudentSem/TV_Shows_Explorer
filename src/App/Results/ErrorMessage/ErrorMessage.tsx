@@ -1,6 +1,6 @@
 import { observer } from "mobx-react-lite";
-import { ColorBars } from "../components/ColorBars/ColorBars";
-import { MessagePanel } from "../components/MessagePanel/MessagePanel";
+import { ColorBars } from "../../components/ColorBars/ColorBars";
+import { MessagePanel } from "../../components/MessagePanel/MessagePanel";
 import styles from "./ErrorMessage.module.css";
 import { usePresenter } from "./logic/usePresenter";
 

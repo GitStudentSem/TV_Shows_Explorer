@@ -1,6 +1,7 @@
 import type { Show } from "../../../api/shows";
-import { ColorBars } from "../components/ColorBars/ColorBars";
+import { FavoriteStar } from "./FavoriteStar/FavoriteStar";
 import { usePresenter } from "./logic/usePresenter";
+import { Poster } from "./Poster/Poster";
 import styles from "./ShowCard.module.css";
 
 export interface ShowCardProps {
@@ -11,10 +12,6 @@ export function ShowCard({ show }: ShowCardProps) {
   const {
     name,
     url,
-    hasPoster,
-    posterUrl,
-    posterAlt,
-    posterImageClassName,
     hasRating,
     rating,
     meta,
@@ -28,24 +25,7 @@ export function ShowCard({ show }: ShowCardProps) {
   return (
     <li>
       <article className={styles.card}>
-        {hasPoster ? (
-          <img
-            className={posterImageClassName}
-            src={posterUrl}
-            alt={posterAlt}
-            width={210}
-            height={295}
-            loading="lazy"
-          />
-        ) : (
-          <ColorBars
-            className={styles.poster}
-            role="img"
-            aria-label="Постера нет"
-          >
-            <span className={styles.posterLabel}>Нет постера</span>
-          </ColorBars>
-        )}
+        <Poster show={show} />
 
         <div className={styles.body}>
           <div className={styles.heading}>
@@ -54,7 +34,10 @@ export function ShowCard({ show }: ShowCardProps) {
                 {name}
               </a>
             </h2>
-            {hasRating && <span className={styles.rating}>★ {rating}</span>}
+            <div className={styles.badges}>
+              {hasRating && <span className={styles.rating}>★ {rating}</span>}
+              <FavoriteStar show={show} />
+            </div>
           </div>
 
           {hasMeta && <p className={styles.meta}>{meta}</p>}

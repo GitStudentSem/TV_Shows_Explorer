@@ -30,5 +30,7 @@ export async function request<T>(path: string, init?: RequestInit): Promise<T> {
   if (!response.ok) {
     throw new ApiError(response.status === 429 ? "rate-limit" : "server");
   }
+  // 204 No Content: тела нет, разбирать нечего.
+  if (response.status === 204) return undefined as T;
   return response.json() as Promise<T>;
 }
