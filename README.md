@@ -129,7 +129,7 @@ src/
 | 3.1–3.3 Дерево папок = дерево компонентов | [`src/App/`](src/App/)                                                                                                            |
 | 4.2 Локальная папка `components`          | [`Results/components/`](src/App/Results/components/) — используется только внутри ветки Results                                   |
 | 5.1–5.2 Именование                        | `SearchBar/SearchBar.tsx` + `SearchBar/usePresenter.ts`                                                                           |
-| 8.1 Стор читает только Presenter          | Ни один `.tsx` не импортирует `stores/`: `grep -rl stores src/App --include='*.tsx'` пуст                                         |
+| 8.1 View не обращается к стору            | Ни один `.tsx` не импортирует `stores/`: `grep -rl stores src/App --include='*.tsx'` пуст                                         |
 | 8.4.1 Ранний выход во View                | [`Pagination/Pagination.tsx`](src/App/Pagination/Pagination.tsx) — `if (!isVisible) return null`                                  |
 | 8.5 Без логики — без Presenter            | [`App.tsx`](src/App/App.tsx) и [`MessagePanel`](src/App/Results/components/MessagePanel/MessagePanel.tsx) не имеют `usePresenter` |
 
