@@ -8,9 +8,10 @@ export interface PosterProps {
 }
 
 export function Poster({ show }: PosterProps) {
-  const { hasPoster, posterUrl, posterAlt, imageClassName } = usePresenter({
-    show,
-  });
+  const { hasPoster, posterUrl, posterAlt, imageClassName, handleError } =
+    usePresenter({
+      show,
+    });
 
   if (!hasPoster) {
     return (
@@ -28,6 +29,7 @@ export function Poster({ show }: PosterProps) {
       width={210}
       height={295}
       loading="lazy"
+      onError={handleError}
     />
   );
 }
