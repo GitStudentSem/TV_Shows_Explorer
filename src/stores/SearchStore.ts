@@ -20,8 +20,6 @@ export class SearchStore {
   #controller: AbortController | null = null;
   /** Запрос, к которому мы идём: ждём debounce, грузим или уже показываем. */
   #targetTerm: string | null = "";
-  /** Запрос, по которому сервер ничего не нашёл: его продолжения тоже пусты. */
-  #emptyTerm: string | null = null;
 
   constructor() {
     makeAutoObservable(this, {}, { autoBind: true });
@@ -41,7 +39,6 @@ export class SearchStore {
     // Вернулись к показанному запросу до debounce: его выдача по-прежнему
     // актуальна, а вместе с ней сохраняются выбранный жанр и страница.
     if (term === this.searchedTerm) return this.#showResults(term, this.shows);
-    if (this.#isKnownEmpty(term)) return this.#showResults(term, []);
 
     // Показываем загрузку сразу, а не после debounce: иначе на быстром
     // интернете скелетон лишь мелькает на время запроса.
@@ -57,12 +54,6 @@ export class SearchStore {
     if (term && (isWaitingDebounce || this.status === "error")) {
       this.#search(term);
     }
-  }
-
-  #isKnownEmpty(term: string) {
-    // TVmaze ищет без учёта регистра.
-    const prefix = this.#emptyTerm?.toLowerCase();
-    return prefix !== undefined && term.toLowerCase().startsWith(prefix);
   }
 
   #cancelPending() {
@@ -95,7 +86,6 @@ export class SearchStore {
       const shows = await searchShows(term, controller.signal);
       if (controller.signal.aborted) return;
 
-      if (shows.length === 0) this.#emptyTerm = term;
       this.#showResults(term, shows);
     } catch (error) {
       if (controller.signal.aborted) return;
