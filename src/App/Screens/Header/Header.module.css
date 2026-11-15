@@ -1,0 +1,33 @@
+.header {
+  margin-bottom: 16px;
+}
+
+.headerRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.logo {
+  font-family: var(--font-display);
+  font-size: clamp(1.1rem, 4.6vw, 2rem);
+  font-weight: 400;
+  line-height: 1.15;
+  color: var(--cream);
+  text-shadow: 3px 3px 0 var(--ink);
+}
+
+.stripes {
+  height: 12px;
+  margin-top: 10px;
+  border: 2px solid var(--ink);
+  background: linear-gradient(
+    90deg,
+    var(--orange) 0 25%,
+    var(--yellow) 25% 50%,
+    var(--teal) 50% 75%,
+    var(--magenta) 75%
+  );
+}

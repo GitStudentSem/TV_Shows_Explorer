@@ -1,0 +1,39 @@
+.tv {
+  position: relative;
+  max-width: 880px;
+  margin: 0 auto;
+  padding: 20px;
+  border: 4px solid var(--ink);
+  border-radius: 28px;
+  background: linear-gradient(160deg, var(--wood), var(--wood-dark));
+  box-shadow: 10px 10px 0 var(--ink);
+}
+
+/* Antennas */
+.tv::before,
+.tv::after {
+  content: "";
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  width: 5px;
+  height: 52px;
+  background: var(--ink);
+  transform-origin: bottom center;
+}
+
+.tv::before {
+  transform: rotate(-32deg);
+}
+
+.tv::after {
+  transform: rotate(32deg);
+}
+
+@media (max-width: 560px) {
+  .tv {
+    padding: 12px;
+    border-radius: 20px;
+    box-shadow: 6px 6px 0 var(--ink);
+  }
+}

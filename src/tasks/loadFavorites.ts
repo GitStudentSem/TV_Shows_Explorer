@@ -6,7 +6,7 @@ export interface LoadFavoritesResult {
   error: ApiErrorCode | null;
 }
 
-/** Загрузить избранное с сервера. Вызывают App при старте и список на «Повторить». */
+/** Загрузить избранное с сервера. Вызывают Screens при старте и список на «Повторить». */
 export async function loadFavorites(
   signal?: AbortSignal,
 ): Promise<LoadFavoritesResult> {
