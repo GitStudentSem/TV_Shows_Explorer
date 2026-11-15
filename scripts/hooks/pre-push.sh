@@ -9,5 +9,5 @@ while read -r _ _ remote_ref _; do
   fi
 done
 
-# Проверка типов и сборка: в PR не уходит то, что не собирается.
-npm run build
+# Проверка типов и сборка клиента, проверка типов сервера: в PR не уходит то, что не собирается.
+npm run build && npm run typecheck:server

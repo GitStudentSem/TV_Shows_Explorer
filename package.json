@@ -4,14 +4,18 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "concurrently -n client,server -c cyan,magenta \"npm:dev:client\" \"npm:dev:server\"",
+    "dev:client": "vite",
+    "dev:server": "npm --prefix server run dev",
     "build": "tsc -b && vite build",
+    "typecheck:server": "npm --prefix server run typecheck",
     "lint": "biome lint .",
     "preview": "vite preview",
     "format": "biome format --write .",
     "check": "biome check .",
     "check:fix": "biome check --write .",
-    "prepare": "simple-git-hooks"
+    "prepare": "simple-git-hooks",
+    "postinstall": "npm --prefix server ci"
   },
   "dependencies": {
     "mobx": "^7.1.5",
@@ -25,6 +29,7 @@
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
     "@vitejs/plugin-react": "^6.1.2",
+    "concurrently": "^10.0.7",
     "simple-git-hooks": "^2.14.0",
     "typescript": "~7.0.2",
     "vite": "^8.3.6"
