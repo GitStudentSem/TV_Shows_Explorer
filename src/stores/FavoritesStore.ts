@@ -26,6 +26,10 @@ export class FavoritesStore {
     return this.ids.has(id);
   }
 
+  indexOf(id: number): number {
+    return this.items.findIndex((show) => show.id === id);
+  }
+
   startLoading() {
     this.status = "loading";
     this.error = null;
@@ -43,8 +47,12 @@ export class FavoritesStore {
 
   /** Новое — первым, как отдаёт сервер. */
   add(show: Show) {
-    if (this.has(show.id)) return;
     this.items.unshift(show);
+  }
+
+  /** Вернуть на прежнее место: откат неудачного удаления. */
+  insert(index: number, show: Show) {
+    this.items.splice(index, 0, show);
   }
 
   remove(id: number) {
