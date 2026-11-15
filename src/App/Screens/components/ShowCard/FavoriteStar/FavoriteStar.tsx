@@ -11,8 +11,7 @@ export interface FavoriteStarProps {
 export const FavoriteStar = observer(function FavoriteStar({
   show,
 }: FavoriteStarProps) {
-  const { icon, isPressed, isDisabled, label, handleClick } =
-    usePresenter(show);
+  const { icon, isPressed, isBusy, label, handleClick } = usePresenter(show);
 
   return (
     <button
@@ -21,7 +20,7 @@ export const FavoriteStar = observer(function FavoriteStar({
       aria-pressed={isPressed}
       aria-label={label}
       title={label}
-      disabled={isDisabled}
+      aria-busy={isBusy}
       onClick={handleClick}
     >
       <Glyph>{icon}</Glyph>

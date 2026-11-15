@@ -5,11 +5,15 @@ import { toastStore } from "../../../../../../stores/ToastStore";
 import { toggleFavorite } from "./tasks/toggleFavorite";
 
 export function usePresenter(show: Show) {
-  // Загрузка одного клика нужна только этой звёздочке — локальное состояние (7.5).
+  // Запрос одного клика нужен только этой звёздочке — локальное состояние (7.5).
   const [isPending, setIsPending] = useState(false);
+  // Звёздочка уже переключилась (optimistic UI), поэтому читаем стор как есть.
   const isFavorite = favoritesStore.has(show.id);
 
   const handleClick = async () => {
+    // Пока сервер не ответил, повторные клики игнорируем: иначе откат одного
+    // запроса перепутается с результатом другого.
+    if (isPending) return;
     setIsPending(true);
     const result = await toggleFavorite(show);
     setIsPending(false);
@@ -24,7 +28,7 @@ export function usePresenter(show: Show) {
   return {
     icon: isFavorite ? "✦" : "✧",
     isPressed: isFavorite,
-    isDisabled: isPending,
+    isBusy: isPending,
     label: isFavorite
       ? `Убрать «${show.name}» из избранного`
       : `Добавить «${show.name}» в избранное`,

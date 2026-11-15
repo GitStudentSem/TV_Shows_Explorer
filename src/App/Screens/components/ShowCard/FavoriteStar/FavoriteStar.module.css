@@ -18,7 +18,7 @@
   background: var(--yellow);
 }
 
-.star:disabled {
+/* Звёздочка уже переключилась, сервер ещё отвечает: только курсор. */
+.star[aria-busy="true"] {
   cursor: progress;
-  opacity: 0.6;
 }
