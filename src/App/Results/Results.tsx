@@ -3,9 +3,9 @@ import { EmptyMessage } from "./EmptyMessage/EmptyMessage";
 import { ErrorMessage } from "./ErrorMessage/ErrorMessage";
 import { GenreChips } from "./GenreChips/GenreChips";
 import { Loading } from "./Loading/Loading";
+import { usePresenter } from "./logic/usePresenter";
 import styles from "./Results.module.css";
 import { ShowCard } from "./ShowCard/ShowCard";
-import { usePresenter } from "./usePresenter";
 
 export const Results = observer(function Results() {
   const { isLoading, isError, isEmpty, isSuccess, foundCount, visibleShows } =

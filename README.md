@@ -105,33 +105,33 @@ src/
     │   ├── ErrorMessage/        состояние «ошибка» + «Повторить»
     │   ├── EmptyMessage/        состояние «ничего не найдено»
     │   ├── GenreChips/          фильтр по жанрам
-    │   ├── ShowCard/            карточка сериала (+ formatShow.ts)
+    │   ├── ShowCard/            карточка сериала (+ logic/formatShow.ts)
     │   └── components/          переиспользуемое только внутри Results
     │       ├── ColorBars/       декоративные полосы
     │       └── MessagePanel/    рамка для Loading / Error / Empty
     └── Pagination/              переключатель страниц
 ```
 
-Сейчас в каждой папке компонента лежат `Component.tsx` (View), `usePresenter.ts`
-(Presenter) и `Component.module.css` (стили). По правилу 3.4 Presenter переедет
-в `logic/`, это запланировано (8.7).
+В каждой папке компонента лежат `Component.tsx` (View), `Component.module.css`
+(стили) и папка `logic/` с Presenter'ом (`usePresenter.ts`) и его
+вспомогательными функциями (правило 3.4).
 
 ## На что обратить внимание при ревью
 
 Соответствие правилам из [`ARCHITECTURE.md`](ARCHITECTURE.md) и где это видно:
 
-| Правило                                   | Пример в коде                                                                                                                     |
-| ----------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
-| 1.1 View — только JSX                     | [`Results/Results.tsx`](src/App/Results/Results.tsx) — флаги и списки приходят готовыми                                           |
-| 1.2 Presenter готовит данные              | [`Results/usePresenter.ts`](src/App/Results/usePresenter.ts) — статусы стора превращаются в `isLoading`, `isEmpty` и т. д.        |
-| 1.3 Логика в именованных хуках            | [`Pagination/usePresenter.ts`](src/App/Pagination/usePresenter.ts) — `usePages`                                                   |
-| 2.1 Не больше 120 строк                   | Проверяется `npm run check`; самый длинный TS-файл — [`SearchStore.ts`](src/stores/SearchStore.ts), 103 строки                    |
-| 3.1–3.3 Дерево папок = дерево компонентов | [`src/App/`](src/App/)                                                                                                            |
-| 4.2 Локальная папка `components`          | [`Results/components/`](src/App/Results/components/) — используется только внутри ветки Results                                   |
-| 5.1–5.2 Именование                        | `SearchBar/SearchBar.tsx` + `SearchBar/usePresenter.ts`                                                                           |
-| 8.1 View не обращается к стору            | Ни один `.tsx` не импортирует `stores/`: `grep -rl stores src/App --include='*.tsx'` пуст                                         |
-| 8.4.1 Ранний выход во View                | [`Pagination/Pagination.tsx`](src/App/Pagination/Pagination.tsx) — `if (!isVisible) return null`                                  |
-| 8.5 Без логики — без Presenter            | [`App.tsx`](src/App/App.tsx) и [`MessagePanel`](src/App/Results/components/MessagePanel/MessagePanel.tsx) не имеют `usePresenter` |
+| Правило                                   | Пример в коде                                                                                                                          |
+| ----------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| 1.1 View — только JSX                     | [`Results/Results.tsx`](src/App/Results/Results.tsx) — флаги и списки приходят готовыми                                                |
+| 1.2 Presenter готовит данные              | [`Results/logic/usePresenter.ts`](src/App/Results/logic/usePresenter.ts) — статусы стора превращаются в `isLoading`, `isEmpty` и т. д. |
+| 1.3 Логика в именованных хуках            | [`Pagination/logic/usePresenter.ts`](src/App/Pagination/logic/usePresenter.ts) — `usePages`                                            |
+| 2.1 Не больше 120 строк                   | Проверяется `npm run check`; самый длинный TS-файл — [`SearchStore.ts`](src/stores/SearchStore.ts), 103 строки                         |
+| 3.1–3.3 Дерево папок = дерево компонентов | [`src/App/`](src/App/)                                                                                                                 |
+| 4.2 Локальная папка `components`          | [`Results/components/`](src/App/Results/components/) — используется только внутри ветки Results                                        |
+| 5.1–5.2 Именование                        | `SearchBar/SearchBar.tsx` + `SearchBar/logic/usePresenter.ts`                                                                          |
+| 8.1 View не обращается к стору            | Ни один `.tsx` не импортирует `stores/`: `grep -rl stores src/App --include='*.tsx'` пуст                                              |
+| 8.4.1 Ранний выход во View                | [`Pagination/Pagination.tsx`](src/App/Pagination/Pagination.tsx) — `if (!isVisible) return null`                                       |
+| 8.5 Без логики — без Presenter            | [`App.tsx`](src/App/App.tsx) и [`MessagePanel`](src/App/Results/components/MessagePanel/MessagePanel.tsx) не имеют `usePresenter`      |
 
 ## Как устроены запросы
 

@@ -1,5 +1,5 @@
-import { searchStore } from "../../stores/SearchStore";
-import { showsListStore } from "../../stores/ShowsListStore";
+import { searchStore } from "../../../stores/SearchStore";
+import { showsListStore } from "../../../stores/ShowsListStore";
 
 export function usePresenter() {
   const { status, shows } = searchStore;

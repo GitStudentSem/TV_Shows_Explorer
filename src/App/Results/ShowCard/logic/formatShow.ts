@@ -1,4 +1,4 @@
-import type { Show } from "../../../api/tvmaze";
+import type { Show } from "../../../../api/tvmaze";
 
 /** API отдаёт описание как HTML. DOMParser не выполняет скрипты, а в разметку идёт только текст. */
 export function getPlainText(html: string | null): string {

@@ -1,6 +1,6 @@
+import type { ShowCardProps } from "../ShowCard";
+import styles from "../ShowCard.module.css";
 import { getMeta, getPlainText } from "./formatShow";
-import type { ShowCardProps } from "./ShowCard";
-import styles from "./ShowCard.module.css";
 
 export function usePresenter({ show }: ShowCardProps) {
   const summary = getPlainText(show.summary);

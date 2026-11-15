@@ -1,6 +1,6 @@
 import { observer } from "mobx-react-lite";
+import { usePresenter } from "./logic/usePresenter";
 import styles from "./Pagination.module.css";
-import { usePresenter } from "./usePresenter";
 
 export const Pagination = observer(function Pagination() {
   const { isVisible, isFirstPage, isLastPage, goPrev, goNext, pages } =

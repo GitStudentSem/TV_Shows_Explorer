@@ -1,4 +1,4 @@
-import { showsListStore } from "../../../stores/ShowsListStore";
+import { showsListStore } from "../../../../stores/ShowsListStore";
 
 export function usePresenter() {
   const { genres, selectedGenre, totalCount } = showsListStore;

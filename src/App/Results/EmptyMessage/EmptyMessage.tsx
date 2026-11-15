@@ -1,7 +1,7 @@
 import { observer } from "mobx-react-lite";
 import { MessagePanel } from "../components/MessagePanel/MessagePanel";
 import styles from "./EmptyMessage.module.css";
-import { usePresenter } from "./usePresenter";
+import { usePresenter } from "./logic/usePresenter";
 
 export const EmptyMessage = observer(function EmptyMessage() {
   const { searchedTerm } = usePresenter();
