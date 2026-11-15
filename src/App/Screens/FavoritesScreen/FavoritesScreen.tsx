@@ -1,13 +1,13 @@
 import { observer } from "mobx-react-lite";
 import { Glyph } from "../components/Glyph/Glyph";
 import { Loading } from "../components/Loading/Loading";
-import { MessagePanel } from "../components/MessagePanel/MessagePanel";
 import { NoSignal } from "../components/NoSignal/NoSignal";
+import { OffAir } from "../components/OffAir/OffAir";
 import { ShowSlots } from "../components/ShowSlots/ShowSlots";
 import styles from "./FavoritesScreen.module.css";
 import { usePresenter } from "./logic/usePresenter";
 
-/** Канал избранного на экране: страница сериалов, загрузка или ошибка. */
+/** Канал избранного на экране: страница сериалов, загрузка, ошибка или пустой список. */
 export const FavoritesScreen = observer(function FavoritesScreen() {
   const {
     isLoading,
@@ -25,13 +25,11 @@ export const FavoritesScreen = observer(function FavoritesScreen() {
       {isLoading && <Loading />}
       {isError && <NoSignal error={error} onRetry={retry} />}
       {isEmpty && (
-        <div className={styles.message}>
-          <MessagePanel title="Пока пусто">
-            <p>
-              Нажмите <Glyph>✧</Glyph> на карточке сериала, и он появится здесь.
-            </p>
-          </MessagePanel>
-        </div>
+        <OffAir title="Пока пусто" role="status">
+          <p>
+            Нажмите <Glyph>✧</Glyph> на карточке сериала, и он появится здесь.
+          </p>
+        </OffAir>
       )}
       {hasShows && (
         <>

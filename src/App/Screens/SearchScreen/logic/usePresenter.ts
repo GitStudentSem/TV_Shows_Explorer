@@ -13,6 +13,8 @@ export function usePresenter({ isWarmingUp }: SearchScreenProps) {
 
   return {
     isWarmingUp,
+    // Запроса ещё нет или поле очистили: искать нечего.
+    isIdle: isOn && !isSearching && status === "idle",
     isLoading: isOn && isSearching,
     isError: isOn && isError,
     error,
