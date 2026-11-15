@@ -1,47 +1,52 @@
 # TV Shows Explorer
 
-Домашнее задание по курсу об архитектуре фронтенда. Приложение ищет сериалы
-через [TVmaze API](https://www.tvmaze.com/api), фильтрует их по жанрам и
-разбивает выдачу на страницы.
+Домашнее задание по курсу об архитектуре фронтенда. Приложение ищет сериалы,
+фильтрует их по жанрам и разбивает выдачу на страницы. Данные берутся из
+[TVmaze API](https://www.tvmaze.com/api) через собственный сервер.
 
 Главное в проекте — архитектура, а не функциональность. Правила, по которым он
 написан, собраны в [`ARCHITECTURE.md`](ARCHITECTURE.md); исходные конспекты
 уроков лежат в [`conspects/`](conspects/).
 
-Код пока приведён к правилам только первого урока. Расхождения с уроком 2
-перечислены в правиле 8.7 `ARCHITECTURE.md`.
+Стек:
 
-Стек: React 19, MobX, TypeScript, Vite, Biome (линтер и форматтер).
+- клиент (`src/`) — React 19, MobX, TypeScript, Vite;
+- сервер (`server/`) — Node 24, Express 5, TypeScript;
+- Biome — линтер и форматтер для обоих.
 
 ## Быстрый старт
 
-Нужен Node.js 22 или новее (проверено на Node 24). API-ключ не нужен, TVmaze
-открытый.
+Нужен Node.js 24 или новее: сервер запускает `.ts` напрямую, без сборки.
+API-ключ не нужен, TVmaze открытый.
 
 ```bash
-npm install
-npm run dev        # http://localhost:5173
+npm install        # зависимости клиента и сервера
+npm run dev        # клиент http://localhost:5173 + сервер http://localhost:3000
 ```
+
+В dev-режиме Vite проксирует `/api/*` на сервер, так что клиент и сервер живут
+на одном адресе.
 
 ## Команды
 
-| Команда             | Что делает                                              |
-| ------------------- | ------------------------------------------------------- |
-| `npm run dev`       | Dev-сервер Vite с hot reload                            |
-| `npm run build`     | Проверка типов (`tsc -b`) и production-сборка в `dist/` |
-| `npm run preview`   | Запуск собранной версии из `dist/`                      |
-| `npm run check`     | Biome: линтер + форматирование + порядок импортов       |
-| `npm run check:fix` | То же, с автоисправлением                               |
-| `npm run lint`      | Только линтер                                           |
-| `npm run format`    | Только форматирование (с записью)                       |
+| Команда                    | Что делает                                                  |
+| -------------------------- | ----------------------------------------------------------- |
+| `npm run dev`              | Клиент и сервер вместе с hot reload                         |
+| `npm run dev:client`       | Только Vite                                                 |
+| `npm run dev:server`       | Только сервер (`node --watch`)                              |
+| `npm run build`            | Проверка типов клиента (`tsc -b`) и сборка в `dist/`        |
+| `npm run typecheck:server` | Проверка типов сервера                                      |
+| `npm run check`            | Biome по всему репозиторию: линтер, форматирование, импорты |
+| `npm run check:fix`        | То же, с автоисправлением                                   |
 
 ## Как проверить проект
 
 ### 1. Автоматические проверки
 
 ```bash
-npm run check   # должно быть: Checked N files ... без ошибок
-npm run build   # типы и сборка проходят без ошибок
+npm run check              # Checked N files ... без ошибок
+npm run build              # типы и сборка клиента
+npm run typecheck:server   # типы сервера
 ```
 
 Часть архитектурных правил проверяется линтером автоматически, настройки в
@@ -59,26 +64,37 @@ npm run build   # типы и сборка проходят без ошибок
 
 После `npm run dev`:
 
-| Сценарий                                          | Ожидаемый результат                                       |
-| ------------------------------------------------- | --------------------------------------------------------- |
-| Ввести `girls` и подождать                        | Через ~370 мс появляется выдача и счётчик «Найдено: N»    |
-| Ввести запрос и сразу нажать Enter                | Поиск стартует без ожидания debounce                      |
-| Быстро печатать, открыв DevTools → Network        | Предыдущие запросы помечены как `canceled`                |
-| Кликнуть по жанру                                 | Выдача и счётчик фильтруются, страница сбрасывается на 01 |
-| Листать страницы (по 3 сериала на странице)       | Работают стрелки и номера, текущая страница подсвечена    |
-| Ввести бессмыслицу, например `qqqzzzxxx`          | Сообщение «Ничего не найдено»                             |
-| DevTools → Network → Offline, затем ввести запрос | Сообщение об ошибке и кнопка «Повторить»                  |
+| Сценарий                                     | Ожидаемый результат                                       |
+| -------------------------------------------- | --------------------------------------------------------- |
+| Ввести `girls` и подождать                   | Через ~370 мс появляется выдача и счётчик «Найдено: N»    |
+| Ввести запрос и сразу нажать Enter           | Поиск стартует без ожидания debounce                      |
+| Быстро печатать, открыв DevTools → Network   | Устаревшие запросы `/api/shows` помечены как `canceled`   |
+| Кликнуть по жанру                            | Выдача и счётчик фильтруются, страница сбрасывается на 01 |
+| Листать страницы (по 3 сериала на странице)  | Работают стрелки и номера, текущая страница подсвечена    |
+| Ввести бессмыслицу, например `qqqzzzxxx`     | Сообщение «Ничего не найдено»                             |
+| Остановить сервер, ввести запрос             | Сообщение об ошибке и кнопка «Повторить»                  |
+| Повторить тот же поиск, смотреть лог сервера | `cache hit search:girls`: в TVmaze запрос не ушёл         |
 
 ## Архитектура в двух словах
 
-Компонент делится на View (`Component.tsx`, только JSX) и Presenter
-(`usePresenter.ts`, готовит данные). Полные правила — в
-[`ARCHITECTURE.md`](ARCHITECTURE.md), разделы 1, 7 и 8.
+Слои VIPER: View (`Component.tsx`, только JSX), Presenter (`logic/usePresenter.ts`),
+Task (`tasks/`, бизнес-логика), Entity (MobX-сторы). Полные правила — в
+[`ARCHITECTURE.md`](ARCHITECTURE.md).
+
+Что где живёт (раздел 9):
+
+| Backend                                    | Frontend                                                    |
+| ------------------------------------------ | ----------------------------------------------------------- |
+| Запросы к TVmaze и кеш на 5 минут          | Не знает о TVmaze, ходит только в `/api`                    |
+| Фильтр по жанру, пагинация, подсчёт жанров | Передаёт `q`, `genre`, `page` и показывает готовую страницу |
+| —                                          | Debounce, отмена запросов, тексты ошибок, форматирование    |
 
 Поток данных:
 
 ```text
-TVmaze API  →  src/api  →  src/stores (MobX)  →  usePresenter  →  View (JSX)
+View ─событие─▶ Presenter ─▶ Task ─▶ src/api ─HTTP─▶ routes ─▶ tasks ─▶ storage / TVmaze
+  ▲                │          └─▶ src/stores (MobX)
+  └── готовые значения ──┘
 ```
 
 View никогда не обращается к сторам напрямую — только через свой Presenter.
@@ -90,66 +106,75 @@ View никогда не обращается к сторам напрямую �
 ```text
 src/
 ├── main.tsx                     точка входа, монтирует <App />
-├── index.css                    глобальные стили
-├── api/
-│   └── tvmaze.ts                HTTP-запрос к TVmaze, тип Show, ApiError
-├── stores/                      состояние приложения (MobX)
-│   ├── SearchStore.ts           запрос, debounce, отмена, статусы загрузки
-│   ├── ShowsListStore.ts        жанры, фильтр, пагинация поверх выдачи
-│   └── getErrorMessage.ts       текст ошибки для пользователя
+├── api/                         общение с нашим сервером
+│   ├── client.ts                базовый запрос, ApiError с кодом ошибки
+│   └── shows.ts                 fetchShows, типы выдачи
+├── stores/
+│   └── SearchStore.ts           параметры поиска и последняя страница выдачи
 └── App/                         корневой компонент экрана
-    ├── App.tsx                  каркас: шапка, SearchBar, Results, Pagination
-    ├── SearchBar/               строка поиска
+    ├── logic/
+    │   ├── useShowsLoader.ts    владелец AbortController, запускает поиск
+    │   └── tasks/searchShows.ts задача: запросить страницу и положить в стор
+    ├── SearchBar/               строка поиска (logic/useTermDebounce.ts — debounce)
     ├── Results/                 область выдачи
     │   ├── Loading/             состояние «загрузка»
-    │   ├── ErrorMessage/        состояние «ошибка» + «Повторить»
+    │   ├── ErrorMessage/        «ошибка» + «Повторить» (logic/getErrorText.ts)
     │   ├── EmptyMessage/        состояние «ничего не найдено»
     │   ├── GenreChips/          фильтр по жанрам
-    │   ├── ShowCard/            карточка сериала (+ logic/formatShow.ts)
+    │   ├── ShowCard/            карточка сериала (logic/formatShow.ts)
     │   └── components/          переиспользуемое только внутри Results
-    │       ├── ColorBars/       декоративные полосы
-    │       └── MessagePanel/    рамка для Loading / Error / Empty
     └── Pagination/              переключатель страниц
+
+server/src/
+├── index.ts, app.ts             запуск и сборка Express-приложения
+├── routes/                      разбор HTTP-запроса и статусы, без логики
+├── tasks/                       бизнес-логика: кеш, поиск, фильтр, пагинация
+├── storage/cache.ts             const cache = {} — данные в памяти
+└── api/tvmaze.ts                запросы к TVmaze
 ```
 
 В каждой папке компонента лежат `Component.tsx` (View), `Component.module.css`
-(стили) и папка `logic/` с Presenter'ом (`usePresenter.ts`) и его
-вспомогательными функциями (правило 3.4).
-
-## На что обратить внимание при ревью
-
-Соответствие правилам из [`ARCHITECTURE.md`](ARCHITECTURE.md) и где это видно:
-
-| Правило                                   | Пример в коде                                                                                                                          |
-| ----------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
-| 1.1 View — только JSX                     | [`Results/Results.tsx`](src/App/Results/Results.tsx) — флаги и списки приходят готовыми                                                |
-| 1.2 Presenter готовит данные              | [`Results/logic/usePresenter.ts`](src/App/Results/logic/usePresenter.ts) — статусы стора превращаются в `isLoading`, `isEmpty` и т. д. |
-| 1.3 Логика в именованных хуках            | [`Pagination/logic/usePresenter.ts`](src/App/Pagination/logic/usePresenter.ts) — `usePages`                                            |
-| 2.1 Не больше 120 строк                   | Проверяется `npm run check`; самый длинный TS-файл — [`SearchStore.ts`](src/stores/SearchStore.ts), 103 строки                         |
-| 3.1–3.3 Дерево папок = дерево компонентов | [`src/App/`](src/App/)                                                                                                                 |
-| 4.2 Локальная папка `components`          | [`Results/components/`](src/App/Results/components/) — используется только внутри ветки Results                                        |
-| 5.1–5.2 Именование                        | `SearchBar/SearchBar.tsx` + `SearchBar/logic/usePresenter.ts`                                                                          |
-| 8.1 View не обращается к стору            | Ни один `.tsx` не импортирует `stores/`: `grep -rl stores src/App --include='*.tsx'` пуст                                              |
-| 8.4.1 Ранний выход во View                | [`Pagination/Pagination.tsx`](src/App/Pagination/Pagination.tsx) — `if (!isVisible) return null`                                       |
-| 8.5 Без логики — без Presenter            | [`App.tsx`](src/App/App.tsx) и [`MessagePanel`](src/App/Results/components/MessagePanel/MessagePanel.tsx) не имеют `usePresenter`      |
+(стили) и папка `logic/` с Presenter'ом и его вспомогательными функциями
+(правило 3.4).
 
 ## Как устроены запросы
 
-Запросы написаны без `useQuery`, логика разделена на два MobX-стора:
+Клиент:
 
-- [`SearchStore`](src/stores/SearchStore.ts) — строка запроса, debounce,
-  отмена запросов, статусы загрузки;
-- [`ShowsListStore`](src/stores/ShowsListStore.ts) — жанры, фильтр и пагинация
-  поверх полученной выдачи.
+- [`useTermDebounce`](src/App/SearchBar/logic/useTermDebounce.ts) ждёт 370 мс
+  после последнего символа и записывает запрос в стор; Enter — сразу;
+- жанр и страница меняются синхронными методами
+  [`SearchStore`](src/stores/SearchStore.ts);
+- [`useShowsLoader`](src/App/logic/useShowsLoader.ts) реагирует на любую смену
+  параметров: отменяет прошлый запрос и вызывает задачу
+  [`searchShows`](src/App/logic/tasks/searchShows.ts). Один владелец отмены на
+  три источника запросов — правило 8.9.1;
+- пока меняются жанр или страница, на экране остаётся прошлая выдача, скелетон
+  показывается только для нового запроса.
 
-Поведение:
+Сервер, `GET /api/shows?q=&genre=&page=`:
 
-- поиск запускается через 370 мс после последнего символа, Enter запускает его
-  сразу;
-- `AbortController` отменяет предыдущий запрос, как только введён новый;
-- состояния `idle`, `loading`, `success` и `error` хранятся в сторе, при ошибке
-  есть кнопка «Повторить»;
-- жанры, фильтрация и пагинация считаются на клиенте через computed-значения.
+- [`getCached`](server/src/tasks/getCached.ts) отдаёт ответ TVmaze из кеша, если
+  такой же запрос был меньше 5 минут назад, иначе запрашивает и обновляет кеш;
+- [`searchShows`](server/src/tasks/searchShows/searchShows.ts) фильтрует по
+  жанру, считает жанры и режет страницу. Смена жанра или страницы в TVmaze не
+  ходит;
+- ошибки приходят кодом: `{ error: "rate-limit" }` (429) или
+  `{ error: "upstream" }` (502). Текст для пользователя делает клиент.
+
+## На что обратить внимание при ревью
+
+| Правило                                   | Пример в коде                                                                                                                                               |
+| ----------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1.1 View — только JSX                     | [`Results/Results.tsx`](src/App/Results/Results.tsx) — флаги и списки приходят готовыми                                                                     |
+| 1.2 Presenter готовит данные              | [`Results/logic/usePresenter.ts`](src/App/Results/logic/usePresenter.ts) — статусы стора превращаются в `isLoading`, `isEmpty` и т. д.                      |
+| 1.3 Логика в именованных хуках            | [`SearchBar/logic/useTermDebounce.ts`](src/App/SearchBar/logic/useTermDebounce.ts), `usePages` в Pagination                                                 |
+| 3.1–3.3 Дерево папок = дерево компонентов | [`src/App/`](src/App/)                                                                                                                                      |
+| 4.2 Локальная папка `components`          | [`Results/components/`](src/App/Results/components/) — используется только внутри ветки Results                                                             |
+| 7.1–7.5 Задача — обычная функция          | [`App/logic/tasks/searchShows.ts`](src/App/logic/tasks/searchShows.ts) — ввод, шаги, результат с кодом ошибки                                               |
+| 8.1 View не обращается к стору            | Ни один `.tsx` не импортирует `stores/`: `grep -rl stores src/App --include='*.tsx'` пуст                                                                   |
+| 8.9 Debounce и отмена — в Presenter       | Стор без таймеров и контроллеров: [`SearchStore.ts`](src/stores/SearchStore.ts)                                                                             |
+| 9.4 Слои сервера                          | [`routes/shows.ts`](server/src/routes/shows.ts) → [`tasks/searchShows/`](server/src/tasks/searchShows/) → [`storage/cache.ts`](server/src/storage/cache.ts) |
 
 ## Редактор
 

@@ -1,9 +1,13 @@
+import { observer } from "mobx-react-lite";
 import styles from "./App.module.css";
+import { usePresenter } from "./logic/usePresenter";
 import { Pagination } from "./Pagination/Pagination";
 import { Results } from "./Results/Results";
 import { SearchBar } from "./SearchBar/SearchBar";
 
-function App() {
+const App = observer(function App() {
+  usePresenter();
+
   return (
     <main className={styles.tv}>
       <header className={styles.header}>
@@ -19,6 +23,6 @@ function App() {
       <Pagination />
     </main>
   );
-}
+});
 
 export default App;

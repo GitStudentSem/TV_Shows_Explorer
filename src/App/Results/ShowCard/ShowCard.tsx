@@ -1,4 +1,4 @@
-import type { Show } from "../../../api/tvmaze";
+import type { Show } from "../../../api/shows";
 import { ColorBars } from "../components/ColorBars/ColorBars";
 import { usePresenter } from "./logic/usePresenter";
 import styles from "./ShowCard.module.css";
