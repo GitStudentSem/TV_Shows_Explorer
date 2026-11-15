@@ -164,7 +164,7 @@ src/
         │   │   ├── EmptyMessage/ состояние «ничего не найдено»
         │   │   └── GenreChips/  фильтр по жанрам (logic/tasks/selectGenre.ts)
         │   └── Pagination/      переключатель страниц (logic/tasks/goToPage.ts и др.)
-        ├── FavoritesScreen/     канал избранного
+        ├── FavoritesScreen/     канал избранного (logic/useStickyShows.ts — снятое не пропадает)
         └── components/          нужное обоим каналам (правило 4.2)
             ├── TvScreen/        рамка кинескопа со строками развёртки
             ├── ShowCard/        карточка: выдача и избранное
