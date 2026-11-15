@@ -1,7 +1,8 @@
 # TV Shows Explorer
 
 Домашнее задание по курсу об архитектуре фронтенда. Приложение ищет сериалы,
-фильтрует их по жанрам и разбивает выдачу на страницы. Данные берутся из
+фильтрует их по жанрам, разбивает выдачу на страницы и хранит избранное.
+Данные берутся из
 [TVmaze API](https://www.tvmaze.com/api) через собственный сервер.
 
 Главное в проекте — архитектура, а не функциональность. Правила, по которым он
@@ -86,16 +87,20 @@ npm run typecheck:server   # типы сервера
 
 После `npm run dev`:
 
-| Сценарий                                     | Ожидаемый результат                                       |
-| -------------------------------------------- | --------------------------------------------------------- |
-| Ввести `girls` и подождать                   | Через ~370 мс появляется выдача и счётчик «Найдено: N»    |
-| Ввести запрос и сразу нажать Enter           | Поиск стартует без ожидания debounce                      |
-| Быстро печатать, открыв DevTools → Network   | Устаревшие запросы `/api/shows` помечены как `canceled`   |
-| Кликнуть по жанру                            | Выдача и счётчик фильтруются, страница сбрасывается на 01 |
-| Листать страницы (по 3 сериала на странице)  | Работают стрелки и номера, текущая страница подсвечена    |
-| Ввести бессмыслицу, например `qqqzzzxxx`     | Сообщение «Ничего не найдено»                             |
-| Остановить сервер, ввести запрос             | Сообщение об ошибке и кнопка «Повторить»                  |
-| Повторить тот же поиск, смотреть лог сервера | `cache hit search:girls`: в TVmaze запрос не ушёл         |
+| Сценарий                                     | Ожидаемый результат                                         |
+| -------------------------------------------- | ----------------------------------------------------------- |
+| Ввести `girls` и подождать                   | Через ~370 мс появляется выдача и счётчик «Найдено: N»      |
+| Ввести запрос и сразу нажать Enter           | Поиск стартует без ожидания debounce                        |
+| Быстро печатать, открыв DevTools → Network   | Устаревшие запросы `/api/shows` помечены как `canceled`     |
+| Кликнуть по жанру                            | Выдача и счётчик фильтруются, страница сбрасывается на 01   |
+| Листать страницы (по 3 сериала на странице)  | Работают стрелки и номера, текущая страница подсвечена      |
+| Ввести бессмыслицу, например `qqqzzzxxx`     | Сообщение «Ничего не найдено»                               |
+| Остановить сервер, ввести запрос             | Сообщение об ошибке и кнопка «Повторить»                    |
+| Нажать ☆ на карточке                         | Звёздочка закрашена, toast «добавлен», счётчик на кнопке +1 |
+| Нажать «★ Избранное»                         | На экране список избранного, кнопка — «← К поиску»          |
+| Нажать ★ в списке избранного                 | Карточка пропадает, toast «убран», выдача поиска на месте   |
+| Перезагрузить страницу                       | Избранное сохранилось: оно на сервере                       |
+| Повторить тот же поиск, смотреть лог сервера | `cache hit search:girls`: в TVmaze запрос не ушёл           |
 
 ## Архитектура в двух словах
 
@@ -105,11 +110,12 @@ Task (`tasks/`, бизнес-логика), Entity (MobX-сторы). Полны
 
 Что где живёт (раздел 9):
 
-| Backend                                    | Frontend                                                    |
-| ------------------------------------------ | ----------------------------------------------------------- |
-| Запросы к TVmaze и кеш на 5 минут          | Не знает о TVmaze, ходит только в `/api`                    |
-| Фильтр по жанру, пагинация, подсчёт жанров | Передаёт `q`, `genre`, `page` и показывает готовую страницу |
-| —                                          | Debounce, отмена запросов, тексты ошибок, форматирование    |
+| Backend                                                         | Frontend                                                         |
+| --------------------------------------------------------------- | ---------------------------------------------------------------- |
+| Запросы к TVmaze и кеш на 5 минут                               | Не знает о TVmaze, ходит только в `/api`                         |
+| Фильтр по жанру, пагинация, подсчёт жанров                      | Передаёт `q`, `genre`, `page` и показывает готовую страницу      |
+| Избранное: `const favorite = {}`, данные шоу берёт у TVmaze сам | Шлёт только id, держит копию списка для звёздочек и счётчика     |
+| —                                                               | Debounce, отмена запросов, тексты ошибок и toast, форматирование |
 
 Поток данных:
 
@@ -130,28 +136,42 @@ src/
 ├── main.tsx                     точка входа, монтирует <App />
 ├── api/                         общение с нашим сервером
 │   ├── client.ts                базовый запрос, ApiError с кодом ошибки
-│   └── shows.ts                 fetchShows, типы выдачи
+│   ├── shows.ts                 fetchShows, типы выдачи
+│   └── favorites.ts             fetchFavorites, putFavorite, deleteFavorite
 ├── stores/
-│   └── SearchStore.ts           параметры поиска и последняя страница выдачи
+│   ├── SearchStore.ts           параметры поиска и последняя страница выдачи
+│   ├── FavoritesStore.ts        копия избранного с сервера
+│   └── ToastStore.ts            текущее уведомление (данные, не текст)
+├── tasks/
+│   └── loadFavorites.ts         нужна App (при старте) и списку (Повторить)
 └── App/                         корневой компонент экрана
     ├── logic/
+    │   ├── usePresenter.ts      какой «канал» на экране: поиск или избранное
     │   ├── useShowsLoader.ts    владелец AbortController, запускает поиск
+    │   ├── useFavoritesLoader.ts грузит избранное при старте
     │   └── tasks/searchShows.ts задача: запросить страницу и положить в стор
+    ├── FavoritesButton/         «★ Избранное» со счётчиком
+    ├── FavoritesPanel/          список избранного вместо выдачи
+    ├── Toast/                   уведомление (logic/getToastText.ts, таймер)
+    ├── components/              нужное в нескольких ветках App (правило 4.2)
+    │   ├── ShowCard/            карточка: выдача и избранное
+    │   │   ├── FavoriteStar/    звёздочка (logic/tasks/toggleFavorite.ts)
+    │   │   └── Poster/          постер или заглушка «Нет постера»
+    │   ├── ColorBars/           декоративные полосы
+    │   └── MessagePanel/        рамка для сообщений
     ├── SearchBar/               строка поиска (logic/useTermDebounce.ts — debounce)
     ├── Results/                 область выдачи
     │   ├── Loading/             состояние «загрузка»
     │   ├── ErrorMessage/        «ошибка» + «Повторить» (logic/getErrorText.ts)
     │   ├── EmptyMessage/        состояние «ничего не найдено»
-    │   ├── GenreChips/          фильтр по жанрам
-    │   ├── ShowCard/            карточка сериала (logic/formatShow.ts)
-    │   └── components/          переиспользуемое только внутри Results
+    │   └── GenreChips/          фильтр по жанрам
     └── Pagination/              переключатель страниц
 
 server/src/
 ├── index.ts, app.ts             запуск и сборка Express-приложения
 ├── routes/                      разбор HTTP-запроса и статусы, без логики
-├── tasks/                       бизнес-логика: кеш, поиск, фильтр, пагинация
-├── storage/cache.ts             const cache = {} — данные в памяти
+├── tasks/                       бизнес-логика: кеш, поиск, фильтр, пагинация, избранное
+├── storage/                     данные в памяти: cache.ts, favorite.ts
 └── api/tvmaze.ts                запросы к TVmaze
 ```
 
@@ -186,17 +206,20 @@ server/src/
 
 ## На что обратить внимание при ревью
 
-| Правило                                   | Пример в коде                                                                                                                                               |
-| ----------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 1.1 View — только JSX                     | [`Results/Results.tsx`](src/App/Results/Results.tsx) — флаги и списки приходят готовыми                                                                     |
-| 1.2 Presenter готовит данные              | [`Results/logic/usePresenter.ts`](src/App/Results/logic/usePresenter.ts) — статусы стора превращаются в `isLoading`, `isEmpty` и т. д.                      |
-| 1.3 Логика в именованных хуках            | [`SearchBar/logic/useTermDebounce.ts`](src/App/SearchBar/logic/useTermDebounce.ts), `usePages` в Pagination                                                 |
-| 3.1–3.3 Дерево папок = дерево компонентов | [`src/App/`](src/App/)                                                                                                                                      |
-| 4.2 Локальная папка `components`          | [`Results/components/`](src/App/Results/components/) — используется только внутри ветки Results                                                             |
-| 7.1–7.5 Задача — обычная функция          | [`App/logic/tasks/searchShows.ts`](src/App/logic/tasks/searchShows.ts) — ввод, шаги, результат с кодом ошибки                                               |
-| 8.1 View не обращается к стору            | Ни один `.tsx` не импортирует `stores/`: `grep -rl stores src/App --include='*.tsx'` пуст                                                                   |
-| 8.9 Debounce и отмена — в Presenter       | Стор без таймеров и контроллеров: [`SearchStore.ts`](src/stores/SearchStore.ts)                                                                             |
-| 9.4 Слои сервера                          | [`routes/shows.ts`](server/src/routes/shows.ts) → [`tasks/searchShows/`](server/src/tasks/searchShows/) → [`storage/cache.ts`](server/src/storage/cache.ts) |
+| Правило                                   | Пример в коде                                                                                                                                                                     |
+| ----------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1.1 View — только JSX                     | [`Results/Results.tsx`](src/App/Results/Results.tsx) — флаги и списки приходят готовыми                                                                                           |
+| 1.2 Presenter готовит данные              | [`Results/logic/usePresenter.ts`](src/App/Results/logic/usePresenter.ts) — статусы стора превращаются в `isLoading`, `isEmpty` и т. д.                                            |
+| 1.3 Логика в именованных хуках            | [`SearchBar/logic/useTermDebounce.ts`](src/App/SearchBar/logic/useTermDebounce.ts), `usePages` в Pagination                                                                       |
+| 3.1–3.3 Дерево папок = дерево компонентов | [`src/App/`](src/App/)                                                                                                                                                            |
+| 4.2 Локальная папка `components`          | [`App/components/`](src/App/components/) — `ShowCard` нужна и выдаче, и избранному                                                                                                |
+| 4.4 Задача лежит у своего компонента      | [`toggleFavorite`](src/App/components/ShowCard/FavoriteStar/logic/tasks/toggleFavorite.ts) у звёздочки, [`loadFavorites`](src/tasks/loadFavorites.ts) — глобальная: её зовут двое |
+| 7.5 Локальное состояние в Presenter       | [`FavoriteStar/logic/usePresenter.ts`](src/App/components/ShowCard/FavoriteStar/logic/usePresenter.ts) — `isPending` клика, toast по результату задачи                            |
+| 8.11 Уведомление — данные                 | [`ToastStore`](src/stores/ToastStore.ts) хранит `kind`, текст — [`getToastText`](src/App/Toast/logic/getToastText.ts)                                                             |
+| 7.1–7.5 Задача — обычная функция          | [`App/logic/tasks/searchShows.ts`](src/App/logic/tasks/searchShows.ts) — ввод, шаги, результат с кодом ошибки                                                                     |
+| 8.1 View не обращается к стору            | Ни один `.tsx` не импортирует `stores/`: `grep -rl stores src/App --include='*.tsx'` пуст                                                                                         |
+| 8.9 Debounce и отмена — в Presenter       | Стор без таймеров и контроллеров: [`SearchStore.ts`](src/stores/SearchStore.ts)                                                                                                   |
+| 9.4 Слои сервера                          | [`routes/favorites.ts`](server/src/routes/favorites.ts) → [`tasks/addFavorite.ts`](server/src/tasks/addFavorite.ts) → [`storage/favorite.ts`](server/src/storage/favorite.ts)     |
 
 ## Редактор
 

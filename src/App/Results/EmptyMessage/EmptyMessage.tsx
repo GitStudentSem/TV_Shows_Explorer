@@ -1,5 +1,5 @@
 import { observer } from "mobx-react-lite";
-import { MessagePanel } from "../components/MessagePanel/MessagePanel";
+import { MessagePanel } from "../../components/MessagePanel/MessagePanel";
 import styles from "./EmptyMessage.module.css";
 import { usePresenter } from "./logic/usePresenter";
 
