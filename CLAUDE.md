@@ -13,11 +13,14 @@
 
 ## Стек и команды
 
-React 19, MobX, TypeScript, Vite, Biome.
+Клиент: React 19, MobX, TypeScript, Vite. Сервер: Node 24, Express 5, TypeScript. Общий линтер — Biome.
 
-- `npm run check` — Biome: линтер, форматирование, порядок импортов. Он же ловит лимит в 120 строк для кода (правило 2.1, `.md` не в счёт).
+- `npm install` — ставит зависимости клиента и через `postinstall` сервера (`server/` — отдельный пакет со своим `package.json`).
+- `npm run dev` — клиент и сервер вместе. Vite проксирует `/api` на `localhost:3000`. По отдельности: `dev:client`, `dev:server`.
+- `npm run check` — Biome по всему репозиторию: линтер, форматирование (в том числе `.md`), порядок импортов. Он же ловит лимит в 120 строк для кода (правило 2.1, на `.md` лимит не действует).
 - `npm run check:fix` — то же с автоисправлением.
-- `npm run build` — проверка типов и сборка.
+- `npm run build` — проверка типов и сборка клиента.
+- `npm run typecheck:server` — проверка типов сервера. Сборки у сервера нет: Node 24 запускает `.ts` напрямую, поэтому в импортах сервера пишем расширение `.ts`, а синтаксис только стираемый (`erasableSyntaxOnly`: без `enum`, `namespace`, parameter properties).
 
 ## Документы проекта
 
@@ -49,4 +52,4 @@ React 19, MobX, TypeScript, Vite, Biome.
   - `chore/` — настройки, зависимости, CI
 - Сообщения коммитов: коротко, на английском, в нижнем регистре, как в истории проекта (`tune debounce and empty state`).
 - В `main` ветка попадает только через Pull Request со squash merge. Merge делается только после явного подтверждения пользователя.
-- Проверки делают git-хуки (`simple-git-hooks`, скрипты в `scripts/hooks/`): `pre-commit` запрещает коммит в `main` и гоняет Biome по файлам коммита, `pre-push` запрещает push в `main` и запускает `npm run build`. Не обходи их через `--no-verify`. После клонирования хуки ставятся сами при `npm install`.
+- Проверки делают git-хуки (`simple-git-hooks`, скрипты в `scripts/hooks/`): `pre-commit` запрещает коммит в `main` и гоняет Biome по файлам коммита, `pre-push` запрещает push в `main` и запускает `npm run build` и `npm run typecheck:server`. Не обходи их через `--no-verify`. После клонирования хуки ставятся сами при `npm install`.
