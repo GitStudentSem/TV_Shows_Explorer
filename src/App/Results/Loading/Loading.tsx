@@ -1,11 +1,8 @@
 import styles from "./Loading.module.css";
 import { usePresenter } from "./logic/usePresenter";
-import { WarmUpScreen } from "./WarmUpScreen/WarmUpScreen";
 
 export function Loading() {
-  const { isWarmingUp, skeletonKeys } = usePresenter();
-
-  if (isWarmingUp) return <WarmUpScreen />;
+  const { skeletonKeys } = usePresenter();
 
   return (
     <div

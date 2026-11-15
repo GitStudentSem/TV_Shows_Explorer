@@ -1,3 +1,11 @@
+/* Same height as WarmUpScreen: after the switch-on the screen stays, it does not collapse. */
+.results {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-height: 320px;
+}
+
 .count {
   font-size: 0.8rem;
   color: var(--muted);

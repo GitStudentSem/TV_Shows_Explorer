@@ -9,7 +9,7 @@ import { SearchBar } from "./SearchBar/SearchBar";
 import { Toast } from "./Toast/Toast";
 
 const App = observer(function App() {
-  const { isFavoritesOpen, toggleFavorites } = usePresenter();
+  const { isWarmingUp, isFavoritesOpen, toggleFavorites } = usePresenter();
 
   return (
     <main className={styles.tv}>
@@ -30,7 +30,7 @@ const App = observer(function App() {
         ) : (
           <>
             <SearchBar />
-            <Results />
+            <Results isWarmingUp={isWarmingUp} />
           </>
         )}
       </div>

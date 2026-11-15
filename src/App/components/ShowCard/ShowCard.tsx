@@ -1,4 +1,5 @@
 import type { Show } from "../../../api/shows";
+import { Glyph } from "../Glyph/Glyph";
 import { FavoriteStar } from "./FavoriteStar/FavoriteStar";
 import { usePresenter } from "./logic/usePresenter";
 import { Poster } from "./Poster/Poster";
@@ -35,7 +36,11 @@ export function ShowCard({ show }: ShowCardProps) {
               </a>
             </h2>
             <div className={styles.badges}>
-              {hasRating && <span className={styles.rating}>★ {rating}</span>}
+              {hasRating && (
+                <span className={styles.rating}>
+                  <Glyph>✦</Glyph> {rating}
+                </span>
+              )}
               <FavoriteStar show={show} />
             </div>
           </div>
