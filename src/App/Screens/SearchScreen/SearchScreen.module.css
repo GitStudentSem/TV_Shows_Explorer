@@ -1,0 +1,15 @@
+/* Fills the whole screen: its height is fixed by TvScreen. */
+.results {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 16px;
+  min-height: 0;
+}
+
+.count {
+  height: var(--status-height);
+  font-size: 0.8rem;
+  line-height: var(--status-height);
+  color: var(--muted);
+}

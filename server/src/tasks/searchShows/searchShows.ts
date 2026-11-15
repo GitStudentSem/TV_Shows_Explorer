@@ -1,8 +1,8 @@
 import type { Show } from "../../api/tvmaze.ts";
 import { getTvmazeShows } from "../getTvmazeShows.ts";
+import { paginate } from "../paginate.ts";
 import { type TvmazeErrorCode, toErrorCode } from "../toErrorCode.ts";
 import { countGenres, type GenreOption } from "./countGenres.ts";
-import { paginate } from "./paginate.ts";
 
 export interface SearchParams {
   term: string;

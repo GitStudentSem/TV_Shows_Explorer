@@ -1,11 +1,11 @@
 import { useEffect } from "react";
-import { loadFavorites } from "../../../tasks/loadFavorites";
+import { loadFavoriteIds } from "./tasks/loadFavoriteIds";
 
-/** Счётчик на кнопке нужен сразу, поэтому избранное грузим при старте приложения. */
+/** Звёздочки и счётчик нужны сразу, поэтому id избранного грузим при старте приложения. */
 export function useFavoritesLoader() {
   useEffect(() => {
     const controller = new AbortController();
-    loadFavorites(controller.signal);
+    loadFavoriteIds(controller.signal);
     return () => controller.abort();
   }, []);
 }

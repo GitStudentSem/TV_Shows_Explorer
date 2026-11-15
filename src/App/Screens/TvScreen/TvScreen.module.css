@@ -1,0 +1,57 @@
+/*
+ * Fixed height on every channel and state: three show slots plus the status
+ * line above them. Children read --slot-height and --slot-gap.
+ */
+.screen {
+  --slot-height: 214px; /* poster 186px + padding + border */
+  --slot-gap: 14px;
+  --status-height: 20px;
+
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 20px;
+  border: 4px solid var(--ink);
+  border-radius: 20px;
+  background: var(--screen);
+  box-shadow: inset 0 0 48px rgb(0 0 0 / 0.75);
+  height: calc(
+    3 *
+    var(--slot-height) +
+    2 *
+    var(--slot-gap) +
+    var(--status-height) +
+    16px +
+    2 *
+    20px +
+    2 *
+    4px
+  );
+  overflow: hidden;
+}
+
+/* Scanlines */
+.screen::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent 0 2px,
+    rgb(0 0 0 / 0.14) 2px 4px
+  );
+}
+
+@media (max-width: 560px) {
+  /* Phone: the screen is taller than the viewport anyway, so it may grow. */
+  .screen {
+    --slot-height: auto;
+
+    height: auto;
+    min-height: 560px;
+    padding: 12px;
+    border-radius: 14px;
+  }
+}
