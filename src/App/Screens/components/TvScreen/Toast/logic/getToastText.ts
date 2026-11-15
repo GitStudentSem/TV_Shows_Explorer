@@ -1,4 +1,4 @@
-import type { Toast } from "../../../stores/ToastStore";
+import type { Toast } from "../../../../../../stores/ToastStore";
 
 export function getToastText({ kind, showName }: Toast): string {
   switch (kind) {

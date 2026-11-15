@@ -145,8 +145,7 @@ src/
 ├── tasks/
 │   ├── loadFavorites.ts         нужна Screens (при старте) и списку (Повторить)
 │   └── loadShows.ts             загрузить выдачу по параметрам из стора
-└── App/                         каркас: <Screens /> и <Toast /> (правило 8.12)
-    ├── Toast/                   уведомление (logic/getToastText.ts, таймер)
+└── App/                         каркас: только <Screens /> (правило 8.12)
     └── Screens/                 корпус телевизора, какой «канал» на экране
         ├── logic/
         │   ├── usePresenter.ts  канал: поиск или избранное (навигация, 1.6)
@@ -167,6 +166,7 @@ src/
         ├── FavoritesScreen/     канал избранного (logic/useStickyShows.ts — снятое не пропадает)
         └── components/          нужное обоим каналам (правило 4.2)
             ├── TvScreen/        рамка кинескопа со строками развёртки
+            │   └── Toast/       бегущая строка «Срочно» на экране (getToastText, таймер)
             ├── ShowCard/        карточка: выдача и избранное
             │   ├── FavoriteStar/ звёздочка (logic/tasks/toggleFavorite.ts)
             │   └── Poster/      постер или заглушка «Нет постера»
@@ -220,13 +220,13 @@ server/src/
 | 1.1 View — только JSX                     | [`Results/Results.tsx`](src/App/Screens/SearchScreen/Results/Results.tsx) — флаги и списки приходят готовыми                                                                              |
 | 1.2 Presenter готовит данные              | [`Results/logic/usePresenter.ts`](src/App/Screens/SearchScreen/Results/logic/usePresenter.ts) — статусы стора превращаются в `isLoading`, `isEmpty` и т. д.                               |
 | 1.3 Логика в именованных хуках            | [`SearchBar/logic/useTermDebounce.ts`](src/App/Screens/SearchScreen/SearchBar/logic/useTermDebounce.ts), `usePages` в Pagination                                                          |
-| 8.12 `App` — только каркас                | [`App.tsx`](src/App/App.tsx) — `<Screens />` и `<Toast />`, без Presenter'а                                                                                                               |
+| 8.12 `App` — только каркас                | [`App.tsx`](src/App/App.tsx) — только `<Screens />`, без Presenter'а                                                                                                                      |
 | 3.1–3.3 Дерево папок = дерево компонентов | [`src/App/`](src/App/)                                                                                                                                                                    |
 | 4.2 Локальная папка `components`          | [`Screens/components/`](src/App/Screens/components/) — `ShowCard` нужна и выдаче, и избранному                                                                                            |
 | 4.4 Задача лежит у своего компонента      | [`toggleFavorite`](src/App/Screens/components/ShowCard/FavoriteStar/logic/tasks/toggleFavorite.ts) у звёздочки, [`loadFavorites`](src/tasks/loadFavorites.ts) — глобальная: её зовут двое |
 | 7.5 Локальное состояние в Presenter       | [`FavoriteStar/logic/usePresenter.ts`](src/App/Screens/components/ShowCard/FavoriteStar/logic/usePresenter.ts) — `isPending` клика, toast по результату задачи                            |
 | 7.9 Optimistic UI и откат в задаче        | [`toggleFavorite`](src/App/Screens/components/ShowCard/FavoriteStar/logic/tasks/toggleFavorite.ts) — стор меняется сразу, при ошибке сервера откатывается                                 |
-| 8.11 Уведомление — данные                 | [`ToastStore`](src/stores/ToastStore.ts) хранит `kind`, текст — [`getToastText`](src/App/Toast/logic/getToastText.ts)                                                                     |
+| 8.11 Уведомление — данные                 | [`ToastStore`](src/stores/ToastStore.ts) хранит `kind`, текст — [`getToastText`](src/App/Screens/components/TvScreen/Toast/logic/getToastText.ts)                                         |
 | 7.1–7.5 Задача — обычная функция          | [`tasks/loadShows.ts`](src/tasks/loadShows.ts) — ввод, шаги, результат с кодом ошибки                                                                                                     |
 | 7.8 Сменил параметр — вызови загрузку     | [`goToPage`](src/App/Screens/SearchScreen/Pagination/logic/tasks/goToPage.ts) — ставит страницу и вызывает `loadShows`, реактивного загрузчика нет                                        |
 | 8.1 View не обращается к стору            | Ни один `.tsx` не импортирует `stores/`: `grep -rl stores src/App --include='*.tsx'` пуст                                                                                                 |

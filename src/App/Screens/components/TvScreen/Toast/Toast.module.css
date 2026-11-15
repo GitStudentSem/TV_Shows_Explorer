@@ -1,0 +1,112 @@
+/* Live region is always in the DOM so screen readers announce new toasts. */
+.region {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 2;
+  pointer-events: none;
+}
+
+/* News band across the bottom of the TV screen; the screen clips its corners. */
+.ticker {
+  --accent: var(--orange);
+
+  /* Width of the band: the text starts exactly behind its right edge. */
+  container-type: inline-size;
+  display: flex;
+  align-items: stretch;
+  overflow: hidden;
+  border-top: 4px solid var(--ink);
+  font-weight: 600;
+  color: var(--ink);
+  background: var(--yellow);
+  box-shadow: 0 -6px 0 var(--accent);
+  pointer-events: auto;
+  animation: slide-in 0.15s ease-out;
+}
+
+.ticker[data-error="true"] {
+  --accent: var(--magenta);
+  color: var(--cream);
+  background: var(--ink);
+}
+
+.label {
+  flex: none;
+  display: flex;
+  align-items: center;
+  padding: 12px 16px;
+  font-family: var(--font-display);
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  color: var(--cream);
+  background: var(--accent);
+  animation: blink 0.4s steps(1) 0.15s 3;
+}
+
+.track {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  padding: 12px 16px;
+}
+
+/* Runs in from behind the screen edge, under the close button, and stops. */
+.text {
+  display: block;
+  animation: run-in 0.9s ease-out 0.15s both;
+}
+
+.close {
+  position: relative;
+  z-index: 1;
+  flex: none;
+  padding: 0 16px;
+  border: none;
+  border-left: 3px solid var(--ink);
+  font-size: 1.5rem;
+  line-height: 1;
+  color: inherit;
+  background: inherit;
+}
+
+@keyframes slide-in {
+  from {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes blink {
+  50% {
+    color: var(--accent);
+    background: var(--cream);
+  }
+}
+
+@keyframes run-in {
+  from {
+    transform: translateX(100cqw);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ticker,
+  .label,
+  .text {
+    animation: none;
+  }
+}
+
+@media (max-width: 560px) {
+  .label {
+    padding: 10px;
+    font-size: 0.75rem;
+  }
+
+  .track {
+    padding: 10px;
+    font-size: 0.875rem;
+  }
+}

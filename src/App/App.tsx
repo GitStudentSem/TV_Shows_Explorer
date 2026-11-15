@@ -1,12 +1,6 @@
 import { Screens } from "./Screens/Screens";
-import { Toast } from "./Toast/Toast";
 
-/** Корень приложения: только каркас. Начинка — в Screens. */
+/** Корень приложения: только каркас. Начинка — в Screens (8.12). */
 export default function App() {
-  return (
-    <>
-      <Screens />
-      <Toast />
-    </>
-  );
+  return <Screens />;
 }
