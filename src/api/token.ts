@@ -1,4 +1,4 @@
-import { STORAGE_NAMES } from "../utils/storageNames";
+import { STORAGE_NAMES } from "../constants/storageNames";
 
 /**
  * Токен сессии — деталь транспорта, его знает только api/ (7.6).
