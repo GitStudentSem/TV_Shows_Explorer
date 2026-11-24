@@ -8,17 +8,20 @@ export type AddFavoriteResult =
   | { error: TvmazeErrorCode };
 
 /**
- * Добавить шоу в избранное по id. Данные шоу сервер берёт у TVmaze сам
+ * Добавить шоу в избранное пользователя по id. Данные шоу сервер берёт у TVmaze сам
  * (через кеш), клиенту достаточно прислать id. Повторное добавление ничего
  * не меняет.
  */
-export async function addFavorite(id: number): Promise<AddFavoriteResult> {
-  const existing = findFavorite(id);
+export async function addFavorite(
+  email: string,
+  id: number,
+): Promise<AddFavoriteResult> {
+  const existing = findFavorite(email, id);
   if (existing) return { error: null, show: existing.show };
 
   try {
     const show = await getCached(`show:${id}`, () => fetchShow(id));
-    saveFavorite(show, Date.now());
+    saveFavorite(email, show, Date.now());
     return { error: null, show };
   } catch (error) {
     return { error: toErrorCode(error) };
