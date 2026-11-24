@@ -1,8 +1,21 @@
+import { clearToken, getToken } from "./token";
+
 /** Адрес нашего сервера. Локально пусто: Vite проксирует /api на сервер. */
 const API_URL = import.meta.env.VITE_API_URL ?? "";
 
 /** Что пошло не так при обращении к серверу. Текст для пользователя делает Presenter (8.10). */
-export type ApiErrorCode = "network" | "rate-limit" | "server";
+export type ApiErrorCode =
+  | "network"
+  | "rate-limit"
+  | "server"
+  | "unauthorized" // 401: токена нет или сервер его забыл (Render заснул)
+  | "bad-request"; // 400: сервер отверг параметры, например кривой email
+
+const STATUS_CODE: Partial<Record<number, ApiErrorCode>> = {
+  400: "bad-request",
+  401: "unauthorized",
+  429: "rate-limit",
+};
 
 export class ApiError extends Error {
   readonly code: ApiErrorCode;
@@ -28,19 +41,28 @@ export function toApiErrorCode(error: unknown): ApiErrorCode {
  * Запрос к нашему API. Любой сбой приходит как ApiError с кодом,
  * кроме отмены: её AbortError пробрасываем как есть.
  */
-export async function request<T>(path: string, init?: RequestInit): Promise<T> {
+export async function request<T>(
+  path: string,
+  init: RequestInit = {},
+): Promise<T> {
+  const token = getToken();
+  const headers = new Headers(init.headers);
+  if (token) headers.set("Authorization", `Bearer ${token}`);
+
   let response: Response;
   try {
-    response = await fetch(`${API_URL}${path}`, init);
+    response = await fetch(`${API_URL}${path}`, { ...init, headers });
   } catch (error) {
-    if (init?.signal?.aborted) throw error;
+    if (init.signal?.aborted) throw error;
     throw new ApiError("network");
   }
 
   if (!response.ok) {
-    throw new ApiError(response.status === 429 ? "rate-limit" : "server");
+    // Сервер не знает этот токен: хранить его дальше бессмысленно.
+    // Стираем, только если за время запроса не появился новый (вошли заново).
+    if (response.status === 401 && getToken() === token) clearToken();
+    throw new ApiError(STATUS_CODE[response.status] ?? "server");
   }
-  // 204 No Content: тела нет, разбирать нечего.
   if (response.status === 204) return undefined as T;
   return response.json() as Promise<T>;
 }

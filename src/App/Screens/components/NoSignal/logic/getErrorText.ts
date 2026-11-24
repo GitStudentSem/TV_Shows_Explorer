@@ -6,6 +6,8 @@ const ERROR_TEXT: Record<ApiErrorCode, string> = {
   "rate-limit":
     "Слишком много запросов. Подождите несколько секунд и попробуйте снова.",
   server: "Сервер вернул ошибку. Попробуйте ещё раз.",
+  unauthorized: "Сессия истекла. Войдите снова.",
+  "bad-request": "Сервер не понял запрос. Попробуйте ещё раз.",
 };
 
 export function getErrorText(code: ApiErrorCode | null): string {
