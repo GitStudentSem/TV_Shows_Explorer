@@ -1,9 +1,9 @@
 import { useEffect } from "react";
-import { loadFavoriteIds } from "../../../tasks/loadFavoriteIds";
+import { restoreSession } from "./tasks/restoreSession";
 
 /** Звёздочки и счётчик нужны сразу, поэтому id избранного грузим при старте приложения. */
-export function useFavoritesLoader() {
+export function useSessionRestore() {
   useEffect(() => {
-    loadFavoriteIds();
+    restoreSession();
   }, []);
 }

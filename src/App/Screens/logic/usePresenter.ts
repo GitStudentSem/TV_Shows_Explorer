@@ -1,9 +1,9 @@
 import { useChannel } from "./useChannels";
-import { useFavoritesLoader } from "./useFavoritesLoader";
+import { useSessionRestore } from "./useSessionRestore";
 import { useWarmUp } from "./useWarmUp";
 
 export function usePresenter() {
-  useFavoritesLoader();
+  useSessionRestore();
   const isWarmingUp = useWarmUp();
   const { channel, toggleFavorites } = useChannel();
 
