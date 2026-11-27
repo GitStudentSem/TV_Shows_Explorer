@@ -3,7 +3,7 @@ import { ControlPanel } from "./ControlPanel/ControlPanel";
 import { FavoritesScreen } from "./FavoritesScreen/FavoritesScreen";
 import { Footer } from "./Footer/Footer";
 import { Header } from "./Header/Header";
-import { LoginScreen } from "./LoginScreen/LognScreen";
+import { LoginScreen } from "./LoginScreen/LoginScreen";
 import { usePresenter } from "./logic/usePresenter";
 import styles from "./Screens.module.css";
 import { SearchScreen } from "./SearchScreen/SearchScreen";

@@ -1,0 +1,22 @@
+.button {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border: 3px solid var(--ink);
+  border-radius: 8px;
+  font-weight: 600;
+  color: var(--ink);
+  background: var(--yellow);
+  box-shadow: 3px 3px 0 var(--ink);
+}
+
+.button:hover {
+  background: var(--orange);
+}
+
+.button:active {
+  box-shadow: none;
+  transform: translate(3px, 3px);
+}
