@@ -20,8 +20,11 @@ export function Footer({
 }: FooterProps) {
   return (
     <footer className={styles.footer}>
-      {isSearchOpen && <SearchPagination />}
-      {isFavoritesOpen ? <FavoritesPagination /> : <SearchPagination />}
+      {isFavoritesOpen ? (
+        <FavoritesPagination />
+      ) : (
+        <SearchPagination isSearchOpen={isSearchOpen} />
+      )}
       <FavoritesButton isOpen={isFavoritesOpen} onToggle={onToggleFavorites} />
     </footer>
   );
