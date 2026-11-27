@@ -5,11 +5,13 @@ import { NoSignal } from "../components/NoSignal/NoSignal";
 import { OffAir } from "../components/OffAir/OffAir";
 import { ShowSlots } from "../components/ShowSlots/ShowSlots";
 import styles from "./FavoritesScreen.module.css";
+import { LoginPrompt } from "./LoginPrompt/LoginPrompt";
 import { usePresenter } from "./logic/usePresenter";
 
 /** Канал избранного на экране: страница сериалов, загрузка, ошибка или пустой список. */
 export const FavoritesScreen = observer(function FavoritesScreen() {
   const {
+    isGuest,
     isLoading,
     isError,
     error,
@@ -22,6 +24,7 @@ export const FavoritesScreen = observer(function FavoritesScreen() {
 
   return (
     <section className={styles.panel} aria-labelledby="favorites-title">
+      {isGuest && <LoginPrompt />}
       {isLoading && <Loading />}
       {isError && <NoSignal error={error} onRetry={retry} />}
       {isEmpty && (

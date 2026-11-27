@@ -3,11 +3,7 @@ import { Glyph } from "../../components/Glyph/Glyph";
 import { TvButton } from "../../components/TvButton/TvButton";
 import styles from "./FavoritesButton.module.css";
 import { usePresenter } from "./logic/usePresenter";
-
-export interface FavoritesButtonProps {
-  isOpen: boolean;
-  onToggle: () => void;
-}
+import type { FavoritesButtonProps } from "./types/FavoriteButtnProps";
 
 export const FavoritesButton = observer(function FavoritesButton(
   props: FavoritesButtonProps,

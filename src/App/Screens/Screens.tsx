@@ -1,5 +1,6 @@
 import { observer } from "mobx-react-lite";
 import { ControlPanel } from "./ControlPanel/ControlPanel";
+import { Loading } from "./components/Loading/Loading";
 import { FavoritesScreen } from "./FavoritesScreen/FavoritesScreen";
 import { Footer } from "./Footer/Footer";
 import { Header } from "./Header/Header";
@@ -19,6 +20,8 @@ export const Screens = observer(function Screens() {
     isWarmingUp,
     isSearchOpen,
     isFavoritesOpen,
+    isFavoritesLoading,
+    isFavoritesVisible,
     isLoginOpen,
     toggleFavorites,
   } = usePresenter();
@@ -33,7 +36,8 @@ export const Screens = observer(function Screens() {
       />
       <TvScreen>
         {isSearchOpen && <SearchScreen isWarmingUp={isWarmingUp} />}
-        {isFavoritesOpen && <FavoritesScreen />}
+        {isFavoritesLoading && <Loading />}
+        {isFavoritesVisible && <FavoritesScreen />}
         {isLoginOpen && <LoginScreen />}
       </TvScreen>
       <Footer
