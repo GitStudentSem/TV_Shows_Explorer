@@ -1,0 +1,50 @@
+.panel {
+  position: relative;
+  z-index: 1;
+  width: min(100%, 26rem);
+  margin: auto;
+  padding: clamp(16px, 5vw, 32px);
+  border: 1px solid var(--panel-line);
+  border-radius: 12px;
+  background: var(--panel);
+  font-family: var(--font-body);
+}
+
+.title {
+  margin-bottom: 20px;
+  color: var(--teal);
+}
+
+.form {
+  display: grid;
+  gap: 12px;
+}
+
+.input {
+  width: 100%;
+  min-width: 0;
+  min-height: 44px;
+  padding: 8px 12px;
+  border: 1px solid var(--muted);
+  border-radius: 6px;
+  background: var(--screen);
+  color: var(--cream);
+  font: inherit;
+}
+
+.submit {
+  margin-top: 4px;
+}
+
+.submit:disabled {
+  background: var(--panel-line);
+  color: var(--muted);
+  box-shadow: none;
+  cursor: default;
+  transform: none;
+}
+
+.error {
+  color: var(--yellow);
+  font-size: 0.875rem;
+}
