@@ -4,23 +4,26 @@ import { getFavoriteIds } from "../tasks/getFavoriteIds.ts";
 import { getFavoritesPage } from "../tasks/getFavoritesPage.ts";
 import { removeFavorite } from "../tasks/removeFavorite.ts";
 import { ERROR_STATUS } from "./errorStatus.ts";
+import { getUserEmail, requireUser } from "./requireUser.ts";
+
+/** Всё избранное доступно только авторизованному пользователю. */
+export const favoritesRouter = Router();
+favoritesRouter.use(requireUser);
 
 /** GET /api/favorites?page=, GET /api/favorites/ids, PUT и DELETE /api/favorites/:id. */
-export const favoritesRouter = Router();
-
 favoritesRouter.get("/", (req, res) => {
-  res.json(getFavoritesPage(Number(req.query.page) || 1));
+  res.json(getFavoritesPage(getUserEmail(res), Number(req.query.page) || 1));
 });
 
 favoritesRouter.get("/ids", (_req, res) => {
-  res.json(getFavoriteIds());
+  res.json(getFavoriteIds(getUserEmail(res)));
 });
 
 favoritesRouter.put("/:id", async (req, res) => {
   const id = parseId(req, res);
   if (id === null) return;
 
-  const result = await addFavorite(id);
+  const result = await addFavorite(getUserEmail(res), id);
   if (result.error) {
     res.status(ERROR_STATUS[result.error]).json({ error: result.error });
     return;
@@ -32,7 +35,7 @@ favoritesRouter.delete("/:id", (req, res) => {
   const id = parseId(req, res);
   if (id === null) return;
 
-  removeFavorite(id);
+  removeFavorite(getUserEmail(res), id);
   res.status(204).end();
 });
 

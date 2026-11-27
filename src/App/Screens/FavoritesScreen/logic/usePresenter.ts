@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { favoritesPageStore } from "../../../../stores/FavoritesPageStore";
 import { favoritesStore } from "../../../../stores/FavoritesStore";
+import { userStore } from "../../../../stores/UserStore";
 import { loadFavoritesPage } from "../../../../tasks/loadFavoritesPage";
 import { openFavorites } from "./tasks/openFavorites";
 
@@ -12,13 +13,15 @@ export function usePresenter() {
 
   const { status, result, error } = favoritesPageStore;
   const isReady = status === "ready";
+  const isGuest = userStore.status === "guest";
 
   return {
-    isLoading: status === "loading",
-    isError: status === "error",
+    isGuest,
+    isLoading: !isGuest && status === "loading",
+    isError: !isGuest && status === "error",
+    isEmpty: !isGuest && isReady && result.shows.length === 0,
+    hasShows: !isGuest && isReady && result.shows.length > 0,
     error,
-    isEmpty: isReady && result.shows.length === 0,
-    hasShows: isReady && result.shows.length > 0,
     // Счётчик — настоящий: снятые, но ещё видимые сериалы в него не входят.
     countText: `Сериалов: ${favoritesStore.count}`,
     shows: result.shows,

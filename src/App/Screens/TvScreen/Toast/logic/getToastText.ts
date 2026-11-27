@@ -8,5 +8,7 @@ export function getToastText({ kind, showName }: Toast): string {
       return `«${showName}» убран из избранного`;
     case "favorite-error":
       return `Не удалось обновить избранное для «${showName}». Попробуйте ещё раз.`;
+    case "session-expired":
+      return "Сессия истекла. Войдите снова.";
   }
 }

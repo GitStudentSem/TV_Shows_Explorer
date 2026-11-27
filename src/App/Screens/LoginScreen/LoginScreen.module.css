@@ -1,0 +1,61 @@
+.panel {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  gap: 16px;
+  width: min(100%, 26rem);
+  margin: auto;
+  padding: 20px;
+  border: 2px solid var(--panel-line);
+  border-radius: 10px;
+  background: var(--panel);
+}
+
+.title {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 400;
+  color: var(--yellow);
+}
+
+.form {
+  display: grid;
+  gap: 12px;
+}
+
+.field {
+  display: grid;
+  gap: 8px;
+}
+
+.label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--yellow);
+}
+
+.input {
+  width: 100%;
+  min-width: 0;
+  min-height: 52px;
+  padding: 10px 14px;
+  border: 3px solid var(--cream);
+  border-radius: 6px;
+  font: 500 1.1rem var(--font-body);
+  color: var(--cream);
+  background: var(--screen);
+  caret-color: var(--orange);
+}
+
+.error {
+  color: var(--yellow);
+  font-size: 0.875rem;
+}
+
+@media (max-width: 560px) {
+  .panel {
+    padding: 12px;
+  }
+}

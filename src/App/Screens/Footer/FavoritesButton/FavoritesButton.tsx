@@ -1,12 +1,9 @@
 import { observer } from "mobx-react-lite";
 import { Glyph } from "../../components/Glyph/Glyph";
+import { TvButton } from "../../components/TvButton/TvButton";
 import styles from "./FavoritesButton.module.css";
 import { usePresenter } from "./logic/usePresenter";
-
-export interface FavoritesButtonProps {
-  isOpen: boolean;
-  onToggle: () => void;
-}
+import type { FavoritesButtonProps } from "./types/FavoriteButtnProps";
 
 export const FavoritesButton = observer(function FavoritesButton(
   props: FavoritesButtonProps,
@@ -15,15 +12,10 @@ export const FavoritesButton = observer(function FavoritesButton(
     usePresenter(props);
 
   return (
-    <button
-      type="button"
-      className={styles.button}
-      aria-pressed={isPressed}
-      onClick={handleClick}
-    >
+    <TvButton aria-pressed={isPressed} onClick={handleClick}>
       <Glyph>{icon}</Glyph>
       {label}
       {hasCount && <span className={styles.count}>{countText}</span>}
-    </button>
+    </TvButton>
   );
 });

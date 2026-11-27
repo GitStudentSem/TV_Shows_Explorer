@@ -1,25 +1,29 @@
 import type { Show } from "../api/tvmaze.ts";
 
-/** Избранное в памяти процесса, одно на весь сервер. Ключ — id шоу. */
+/** Избранное в памяти процесса: email пользователя → (id шоу → запись). */
 interface FavoriteEntry {
   show: Show;
   addedAt: number;
 }
 
-const favorite: Record<number, FavoriteEntry> = {};
+const favorites: Record<string, Record<number, FavoriteEntry>> = {};
 
-export function listFavorites(): FavoriteEntry[] {
-  return Object.values(favorite);
+export function listFavorites(email: string): FavoriteEntry[] {
+  return Object.values(favorites[email] ?? {});
 }
 
-export function findFavorite(id: number): FavoriteEntry | undefined {
-  return favorite[id];
+export function findFavorite(
+  email: string,
+  id: number,
+): FavoriteEntry | undefined {
+  return favorites[email]?.[id];
 }
 
-export function saveFavorite(show: Show, addedAt: number) {
-  favorite[show.id] = { show, addedAt };
+export function saveFavorite(email: string, show: Show, addedAt: number) {
+  favorites[email] ??= {};
+  favorites[email][show.id] = { show, addedAt };
 }
 
-export function deleteFavorite(id: number) {
-  delete favorite[id];
+export function deleteFavorite(email: string, id: number) {
+  delete favorites[email]?.[id];
 }

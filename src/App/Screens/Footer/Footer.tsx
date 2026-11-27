@@ -5,6 +5,7 @@ import { SearchPagination } from "./SearchPagination/SearchPagination";
 
 export interface FooterProps {
   isFavoritesOpen: boolean;
+  isSearchOpen: boolean;
   onToggleFavorites: () => void;
 }
 
@@ -12,10 +13,18 @@ export interface FooterProps {
  * Низ корпуса: ручки управления. Они на месте на любом канале и в любом
  * состоянии, поэтому высота телевизора не меняется.
  */
-export function Footer({ isFavoritesOpen, onToggleFavorites }: FooterProps) {
+export function Footer({
+  isFavoritesOpen,
+  onToggleFavorites,
+  isSearchOpen,
+}: FooterProps) {
   return (
     <footer className={styles.footer}>
-      {isFavoritesOpen ? <FavoritesPagination /> : <SearchPagination />}
+      {isFavoritesOpen ? (
+        <FavoritesPagination />
+      ) : (
+        <SearchPagination isSearchOpen={isSearchOpen} />
+      )}
       <FavoritesButton isOpen={isFavoritesOpen} onToggle={onToggleFavorites} />
     </footer>
   );

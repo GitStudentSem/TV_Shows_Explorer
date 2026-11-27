@@ -42,6 +42,11 @@ export class FavoritesStore {
   remove(id: number) {
     this.ids.delete(id);
   }
+
+  clear() {
+    this.ids = new Set();
+    this.status = "ready";
+  }
 }
 
 export const favoritesStore = new FavoritesStore();

@@ -9,9 +9,9 @@ export interface FavoritesPage {
   pageCount: number;
 }
 
-/** Страница избранного, последние добавленные — первыми. */
-export function getFavoritesPage(page: number): FavoritesPage {
-  const shows = listFavorites()
+/** Страница избранного пользователя, последние добавленные — первыми. */
+export function getFavoritesPage(email: string, page: number): FavoritesPage {
+  const shows = listFavorites(email)
     .sort((a, b) => b.addedAt - a.addedAt)
     .map((entry) => entry.show);
   const { items, ...pagination } = paginate(shows, page);

@@ -1,17 +1,22 @@
-import { useState } from "react";
-import { useFavoritesLoader } from "./useFavoritesLoader";
+import { userStore } from "../../../stores/UserStore";
+import { useChannel } from "./useChannels";
+import { useSessionRestore } from "./useSessionRestore";
 import { useWarmUp } from "./useWarmUp";
 
 export function usePresenter() {
-  useFavoritesLoader();
+  useSessionRestore();
   const isWarmingUp = useWarmUp();
-
-  // Какой «канал» на экране — навигация, она живёт в Presenter (1.6).
-  const [isFavoritesOpen, setIsFavoritesOpen] = useState(false);
+  const { channel, toggleFavorites } = useChannel();
+  const isFavoritesOpen = channel === "favorites";
+  const isCheckingSession = userStore.status === "checking";
 
   return {
     isWarmingUp,
+    isSearchOpen: channel === "search",
     isFavoritesOpen,
-    toggleFavorites: () => setIsFavoritesOpen((isOpen) => !isOpen),
+    isFavoritesLoading: isFavoritesOpen && isCheckingSession,
+    isFavoritesVisible: isFavoritesOpen && !isCheckingSession,
+    isLoginOpen: channel === "login",
+    toggleFavorites,
   };
 }
