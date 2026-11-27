@@ -3,9 +3,9 @@ import styles from "./TvButton.module.css";
 
 type TvButtonProps = Pick<
   ComponentPropsWithoutRef<"button">,
-  "aria-pressed" | "children" | "onClick"
+  "aria-pressed" | "children" | "disabled" | "onClick" | "type"
 >;
 
-export function TvButton(props: TvButtonProps) {
-  return <button {...props} type="button" className={styles.button} />;
+export function TvButton({ type = "button", ...props }: TvButtonProps) {
+  return <button {...props} type={type} className={styles.button} />;
 }
