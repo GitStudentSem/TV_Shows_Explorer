@@ -4,7 +4,8 @@ import { makeAutoObservable } from "mobx";
 export type ToastKind =
   | "favorite-added"
   | "favorite-removed"
-  | "favorite-error";
+  | "favorite-error"
+  | "session-expired";
 
 export interface Toast {
   /** Новый id на каждый показ: так повторное одинаковое уведомление перезапускает таймер. */
@@ -21,9 +22,9 @@ export class ToastStore {
     makeAutoObservable(this, {}, { autoBind: true });
   }
 
-  show(kind: ToastKind, showName: string) {
+  show(kind: ToastKind, showName?: string) {
     this.#lastId += 1;
-    this.current = { id: this.#lastId, kind, showName };
+    this.current = { id: this.#lastId, kind, showName: showName || "" };
   }
 
   hide() {

@@ -8,6 +8,7 @@ import {
 } from "../../../../../../../../api/favorites";
 import type { Show } from "../../../../../../../../api/shows";
 import { favoritesStore } from "../../../../../../../../stores/FavoritesStore";
+import { endSession } from "../../../../../../../../tasks/endSession";
 
 export type ToggleFavoriteResult =
   | { error: null; isFavorite: boolean }
@@ -27,8 +28,10 @@ async function addFavorite(show: Show): Promise<ToggleFavoriteResult> {
     await putFavorite(show.id);
     return { error: null, isFavorite: true };
   } catch (error) {
-    favoritesStore.remove(show.id);
-    return { error: toApiErrorCode(error) };
+    const code = toApiErrorCode(error);
+    favoritesStore.remove(show.id); // откат, как сейчас
+    if (code === "unauthorized") endSession();
+    return { error: code };
   }
 }
 
@@ -38,7 +41,9 @@ async function removeFavorite(show: Show): Promise<ToggleFavoriteResult> {
     await deleteFavorite(show.id);
     return { error: null, isFavorite: false };
   } catch (error) {
-    favoritesStore.add(show.id);
-    return { error: toApiErrorCode(error) };
+    const code = toApiErrorCode(error);
+    favoritesStore.add(show.id); // откат, как сейчас
+    if (code === "unauthorized") endSession();
+    return { error: code };
   }
 }

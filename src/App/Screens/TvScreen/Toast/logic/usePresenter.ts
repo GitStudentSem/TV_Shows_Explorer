@@ -8,7 +8,8 @@ const TOAST_MS = 4500;
 export function usePresenter() {
   const toast = toastStore.current;
   const toastId = toast?.id;
-  const isError = toast?.kind === "favorite-error";
+  const isError =
+    toast?.kind === "favorite-error" || toast?.kind === "session-expired";
 
   // Таймер автоскрытия — реакция интерфейса, поэтому он здесь, а не в сторе (8.11).
   // Новое уведомление меняет toastId, и cleanup снимает таймер прошлого.

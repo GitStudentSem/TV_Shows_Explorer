@@ -2,6 +2,7 @@ import { type ApiErrorCode, isAbortError, toApiErrorCode } from "../api/client";
 import { fetchFavoritesPage } from "../api/favorites";
 import { favoritesPageStore } from "../stores/FavoritesPageStore";
 import { userStore } from "../stores/UserStore";
+import { endSession } from "./endSession";
 
 export interface LoadFavoritesPageResult {
   error: ApiErrorCode | null;
@@ -26,6 +27,10 @@ export async function loadFavoritesPage(): Promise<LoadFavoritesPageResult> {
       return { error: null };
 
     const code = toApiErrorCode(error);
+    if (code === "unauthorized") {
+      endSession(); // экран избранного сам покажет приглашение войти
+      return { error: code };
+    }
     favoritesPageStore.showError(code);
     return { error: code };
   }

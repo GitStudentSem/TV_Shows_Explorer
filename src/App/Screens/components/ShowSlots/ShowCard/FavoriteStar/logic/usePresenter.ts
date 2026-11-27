@@ -24,11 +24,11 @@ export function usePresenter(show: Show) {
     const result = await toggleFavorite(show);
     setIsPending(false);
 
+    if (result.error === "unauthorized") {
+      toastStore.show("session-expired");
+      return navigate("/login");
+    }
     if (result.error) return toastStore.show("favorite-error", show.name);
-    toastStore.show(
-      result.isFavorite ? "favorite-added" : "favorite-removed",
-      show.name,
-    );
   };
 
   return {
